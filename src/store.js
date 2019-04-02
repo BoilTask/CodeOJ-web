@@ -4,13 +4,13 @@ import Vuex from 'vuex'
 Vue.use(Vuex)
 
 export default new Vuex.Store({
-  state: {
+    state: {
+        API_ROOT: 'http://api.codeoj.cn'
+    },
+    mutations: {
 
-  },
-  mutations: {
+    },
+    actions: {
 
-  },
-  actions: {
-
-  }
+    }
 })
