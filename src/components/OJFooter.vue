@@ -1,7 +1,7 @@
 <template>
 	<Footer class="footer">
 		<div class="footer-left">
-			<Time :time="time" :interval="1" />
+			{{time}}
 		</div>
 		<div>
 			<Button ghost>
@@ -20,8 +20,40 @@
 		data() {
 			return {
 				API_ROOT: this.$store.state.API_ROOT,
-				time: new Date()
+				time: this.getTime()
 			}
+		},
+		methods: {
+			getTime: function() {
+				var currentTime = new Date(new Date(this.time==null?(new Date()):this.time).getTime() + 1000)
+				var Y = currentTime.getYear() + 1900
+				var M = currentTime.getMonth() + 1
+				var D = currentTime.getDate()
+				var h = currentTime.getHours()
+				var m = currentTime.getMinutes()
+				var s = currentTime.getSeconds()
+				return Y + "-" + M + "-" + D + " " + (h >= 10 ? h : "0" + h) + ":" + (m >= 10 ? m : "0" + m) + ":" + (s >= 10 ? s :
+					"0" + s)
+			}
+		},
+		mounted() {
+			axios
+				.get('http://api.codeoj.cn/time')
+				.then(response => (
+					this.time = response.data.time
+				))
+			setInterval(() => {
+				var currentTime = new Date(new Date(this.time).getTime() + 1000)
+				var Y = currentTime.getYear() + 1900;
+				var M = currentTime.getMonth() + 1;
+				var D = currentTime.getDate();
+				var h = currentTime.getHours();
+				var m = currentTime.getMinutes();
+				var s = currentTime.getSeconds();
+				this.time = Y + "-" + M + "-" + D + " " + (h >= 10 ? h : "0" + h) + ":" + (m >= 10 ? m : "0" + m) + ":" + (s >=
+					10 ? s : "0" + s)
+			}, 1000)
+			
 		}
 	}
 </script>
