@@ -1,10 +1,11 @@
 <template>
 	<Footer class="footer">
+		<BackTop></BackTop>
 		<div class="footer-left">
 			{{time}}
 		</div>
 		<div>
-			<Button ghost>
+			<Button to="//www.miitbeian.gov.cn" target="_blank" ghost>
 				豫ICP备15024677号-3
 			</Button>
 		</div>

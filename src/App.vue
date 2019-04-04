@@ -3,7 +3,9 @@
     <div class="layout container">
       <Layout>
         <OJHeader />
-        <router-view />
+		
+        <router-view ></router-view>
+		
         <OJFooter />
       </Layout>
     </div>
@@ -27,11 +29,14 @@
 		font-family: 'Avenir', Helvetica, Arial, sans-serif;
 		-webkit-font-smoothing: antialiased;
 		-moz-osx-font-smoothing: grayscale;
-		text-align: center;
+		/* text-align: center; */
 		color: #2c3e50;
 		width: 100%;
 	}
-
+	.flexDiv{
+		display: flex;
+		justify-content: space-between;
+	}
 	.container {
 		width: 1200px;
 		margin: 0 auto;
@@ -39,7 +44,7 @@
 
 	@media(max-width:1200px) {
 		.container {
-			width: 100%;
+			/* width: 100%; */
 		}
 	}
 </style>

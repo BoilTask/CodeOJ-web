@@ -1,116 +1,86 @@
 <template>
-  <Header :style="{padding: '0'}">
-    <Menu
-      mode="horizontal"
-      :active-name="menuactive"
-      :style="{width: '100%' , height:'100%'}"
-    >
-      <router-link to="/">
-        <MenuItem name="/">
-          <Icon type="ios-paper" />
-          CodeOJ
-        </MenuItem>
-      </router-link>
-      <router-link to="/problem">
-        <MenuItem name="/problem">
-          <Icon type="ios-people" />
-          问题
-        </MenuItem>
-      </router-link>
-      <router-link to="/status">
-        <MenuItem name="/status">
-          <Icon type="ios-people" />
-          状态
-        </MenuItem>
-      </router-link>
-      <router-link to="/ai">
-        <MenuItem name="/ai">
-          <Icon type="ios-people" />
-          对战
-        </MenuItem>
-      </router-link>
-      <router-link to="/rank">
-        <MenuItem name="/rank">
-          <Icon type="ios-people" />
-          排名
-        </MenuItem>
-      </router-link>
-      <Submenu name="/discuss">
-        <template slot="title">
-          <Icon type="ios-stats" />
-          社区
-        </template>
-        <router-link to="/blog">
-          <MenuItem name="/blog">
-            博客
-          </MenuItem>
-        </router-link>
-        <router-link to="/bbs">
-          <MenuItem name="/bbs">
-            论坛
-          </MenuItem>
-        </router-link>
-      </Submenu>
-      <Submenu name="/contest">
-        <template slot="title">
-          <Icon type="ios-stats" />
-          竞赛
-        </template>
-        <MenuGroup title="使用">
-          <MenuItem name="3-1">
-            新增和启动
-          </MenuItem>
-          <MenuItem name="3-2">
-            活跃分析
-          </MenuItem>
-          <MenuItem name="3-3">
-            时段分析
-          </MenuItem>
-        </MenuGroup>
-        <MenuGroup title="留存">
-          <MenuItem name="3-4">
-            用户留存
-          </MenuItem>
-          <MenuItem name="3-5">
-            流失用户
-          </MenuItem>
-        </MenuGroup>
-      </Submenu>
-      <router-link to="/help">
-        <MenuItem name="/help">
-          <Icon type="ios-people" />
-          帮助
-        </MenuItem>
-      </router-link>
-      <div class="nav-profile">
-        <Submenu name="/profile">
-          <template slot="title">
-            <Icon type="ios-people" />
-            {{ user }}
-          </template>
-          <MenuItem name="/login">
-            登录
-          </MenuItem>
-          <MenuItem name="/register">
-            注册
-          </MenuItem>
-        </Submenu>
-      </div>
-    </Menu>
-  </Header>
+	<Header :style="{padding: '0'}">
+		<Menu mode="horizontal" :active-name="menuactive" :style="{width: '100%' , height:'100%'}">
+			<MenuItem name="/" to="/">
+			<Icon type="ios-paper" />
+			CodeOJ
+			</MenuItem>
+			<MenuItem name="/problem" to="/problem">
+			<Icon type="ios-people" />
+			问题
+			</MenuItem>
+			<MenuItem name="/status" to="/status">
+			<Icon type="ios-people" />
+			状态
+			</MenuItem>
+			<MenuItem name="/ai" to="/ai">
+			<Icon type="ios-people" />
+			对战
+			</MenuItem>
+			<MenuItem name="/rank" to="/rank">
+			<Icon type="ios-people" />
+			排名
+			</MenuItem>
+			<Submenu name="/discuss">
+				<template slot="title">
+					<Icon type="ios-stats" />
+					社区
+				</template>
+				<MenuItem name="/blog" to="/blog">
+				博客
+				</MenuItem>
+				<MenuItem name="/bbs" to="/blog">
+				论坛
+				</MenuItem>
+			</Submenu>
+			<Submenu name="/contest">
+				<template slot="title">
+					<Icon type="ios-stats" />
+					竞赛
+				</template>
+				<MenuItem name="3-1" to="/contest">
+				比赛
+				</MenuItem>
+				<MenuItem name="3-2" to="/contest">
+				训练
+				</MenuItem>
+				<MenuItem name="3-3" to="/contest">
+				考试
+				</MenuItem>
+			</Submenu>
+			<MenuItem name="/help" to="/help">
+			<Icon type="ios-people" />
+			帮助
+			</MenuItem>
+			<div class="nav-profile">
+				<Submenu name="/profile">
+					<template slot="title">
+						<Icon type="ios-people" />
+						{{ user }}
+					</template>
+					<MenuItem name="/login">
+					登录
+					</MenuItem>
+					<MenuItem name="/register">
+					注册
+					</MenuItem>
+				</Submenu>
+			</div>
+		</Menu>
+	</Header>
 </template>
 
 <script>
 	export default {
 		name: 'Ojheader',
-		data () {
+		data() {
 			return {
 				menuactive: this.$route.path,
 				user: '用户'
 			}
 		},
 		watch: {
-			'$route' () {
+			'$route'() {
 				this.menuactive = this.$route.path
 			}
 		}
@@ -122,7 +92,8 @@
 		background-color: #FFFFFF;
 		box-shadow: 0 2px 3px 2px rgba(0, 0, 0, .1);
 	}
-	.nav-profile{
+
+	.nav-profile {
 		float: right;
 	}
 </style>

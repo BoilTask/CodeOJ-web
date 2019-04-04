@@ -8,11 +8,15 @@ import '../iview-variables.less'
 Vue.use(iView)
 
 router.beforeEach((to, from, next) => {
-    iView.LoadingBar.start();
+	iView.LoadingBar.start();
 	iView.Spin.show()
-    next();
+	if (to.meta.title) {
+		document.title = to.meta.title
+	}
+	next();
 });
 
 router.afterEach(route => {
-    iView.LoadingBar.finish();
+	iView.LoadingBar.finish();
+	iView.Spin.hide()
 });

@@ -5,15 +5,11 @@ import router from './router'
 import store from './store'
 import './plugins/iview.js'
 
-Vue.config.productionTip = false
+import iEditor from 'iview-editor';
+import 'iview-editor/dist/iview-editor.css';
+Vue.use(iEditor);
 
-router.beforeEach((to, from, next) => {
-  /* 路由发生变化修改页面title */
-  if (to.meta.title) {
-    document.title = to.meta.title
-  }
-  next()
-})
+Vue.config.productionTip = false
 
 
 new Vue({
