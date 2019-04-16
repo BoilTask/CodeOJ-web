@@ -2,7 +2,7 @@
 	<Layout>
 		<Row>
 			<Col span="16">
-			<Content>
+			<Content style="text-align: center;">
 				<Page :total="problemCnt" :page-size="problemPageSize" :current="problemPage" @on-change="changePage" show-elevator
 				 show-total class="pageBar" />
 				<Table stripe :columns="problemColumns" :data="problemData" :loading="problemLoading"></Table>
@@ -29,16 +29,16 @@
 				problemPageSize: 50,
 				problemColumns: [{
 						title: '#',
-						key: 'id',
+						key: 'problem_id',
 						width: 80,
 						render: (h, params) => {
 							return h('Button', {
 								props: {
 									type: 'dashed',
 									size: 'small',
-									to: '/problem/' + params.row.id
+									to: '/problem/' + params.row.problem_id
 								}
-							}, params.row.id);
+							}, params.row.problem_id);
 						}
 					}, {
 						title: '标题',
@@ -47,7 +47,7 @@
 							return h('Button', {
 								props: {
 									type: 'dashed',
-									to: '/problem/' + params.row.id
+									to: '/problem/' + params.row.problem_id
 								}
 							}, params.row.title);
 						}
@@ -62,11 +62,11 @@
 										props: {
 											type: index & 1 ? 'info' : 'success',
 											size: 'small',
-											to: '/problem/tag/' + item
+											to: '/problem/tag/' + item.name
 										},
 										style: "margin:0 1px"
 									},
-									item
+									item.name
 								))
 							}))
 							return h('div', Vnode);
@@ -116,11 +116,12 @@
 			getProblemList() {
 				this.problemLoading = true;
 				axios
-					.get('http://api.codeoj.cn/problemlist?pagesize=' + this.problemPageSize + "&page=" + this.problemPage)
+					.get(this.$store.state.API_ROOT + 'problem/list/'+this.problemPage)
 					.then(response => {
-						this.problemData = response.data.problemList
-						this.problemCnt = response.data.problemCnt
-						this.problemPageSize = response.data.pageSize
+						
+						this.problemData = response.data.data.problemList
+						this.problemCnt = response.data.data.total
+						this.problemPageSize = response.data.data.pageSize
 						this.problemLoading = false;
 					}).catch(function(error) {
 						console.log(error);

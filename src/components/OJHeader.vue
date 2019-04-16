@@ -1,39 +1,39 @@
 <template>
 	<Header :style="{padding: '0'}">
 		<Menu mode="horizontal" :active-name="menuactive" :style="{width: '100%' , height:'100%'}">
-			<MenuItem name="/" to="/">
+			<MenuItem name="home" to="/">
 			<Icon type="ios-paper" />
 			CodeOJ
 			</MenuItem>
-			<MenuItem name="/problem" to="/problem">
+			<MenuItem name="problem" to="/problem">
 			<Icon type="ios-people" />
 			问题
 			</MenuItem>
-			<MenuItem name="/status" to="/status">
+			<MenuItem name="status" to="/status">
 			<Icon type="ios-people" />
 			状态
 			</MenuItem>
-			<MenuItem name="/ai" to="/ai">
+			<MenuItem name="ai" to="/ai">
 			<Icon type="ios-people" />
 			对战
 			</MenuItem>
-			<MenuItem name="/rank" to="/rank">
+			<MenuItem name="rank" to="/rank">
 			<Icon type="ios-people" />
 			排名
 			</MenuItem>
-			<Submenu name="/discuss">
+			<Submenu name="discuss">
 				<template slot="title">
 					<Icon type="ios-stats" />
 					社区
 				</template>
-				<MenuItem name="/blog" to="/blog">
+				<MenuItem name="blog" to="/blog">
 				博客
 				</MenuItem>
-				<MenuItem name="/bbs" to="/blog">
+				<MenuItem name="bbs" to="/blog">
 				论坛
 				</MenuItem>
 			</Submenu>
-			<Submenu name="/contest">
+			<Submenu name="contest">
 				<template slot="title">
 					<Icon type="ios-stats" />
 					竞赛
@@ -48,40 +48,114 @@
 				考试
 				</MenuItem>
 			</Submenu>
-			<MenuItem name="/help" to="/help">
+			<MenuItem name="help" to="/help">
 			<Icon type="ios-people" />
 			帮助
 			</MenuItem>
 			<div class="nav-profile">
-				<Submenu name="/profile">
+
+				<Submenu v-if="isLogin" name="profile">
 					<template slot="title">
 						<Icon type="ios-people" />
-						{{ user }}
+						{{ user_id }}
 					</template>
-					<MenuItem name="/login">
+					<MenuItem name="logout" @click.native="logout">
+					注销
+					</MenuItem>
+				</Submenu>
+				<Submenu v-else name="profile">
+					<template slot="title">
+						<Icon type="ios-people" />
+						用户
+					</template>
+					<MenuItem name="login" @click.native="loginShow">
 					登录
 					</MenuItem>
-					<MenuItem name="/register">
+					<MenuItem name="register">
 					注册
 					</MenuItem>
 				</Submenu>
 			</div>
 		</Menu>
+		<Drawer :title="drawerTitle" :closable="false" v-model="drawerShow">
+			<LoginForm></LoginForm>
+		</Drawer>
 	</Header>
+
 </template>
 
 <script>
+	import {
+		mapState
+	} from 'vuex'
+	import LoginForm from './LoginForm.vue'
 	export default {
 		name: 'Ojheader',
+		components: {
+			LoginForm
+		},
 		data() {
 			return {
-				menuactive: this.$route.path,
-				user: '用户'
+				drawerTitle: ''
+			}
+		},
+		computed: {
+			menuactive: {
+				get: function() {
+					let url = this.$route.path
+					let activeName = url.split("/")[1]
+					if (activeName == "") {
+						activeName = "home"
+					}
+					return activeName
+				},
+				set: function(val) {
+
+				}
+			},
+			drawerShow: {
+				get: function() {
+					return this.$store.state.drawerShow
+				},
+				set: function(val) {
+					this.$store.state.drawerShow = val
+				}
+			},
+			isLogin: function() {
+				return this.$store.state.loginInfo.isLogin
+			},
+			user_id: function() {
+				if (this.$store.state.loginInfo.isLogin)
+					return this.$store.state.loginInfo.user_id
+				else
+					return '用户'
 			}
 		},
 		watch: {
 			'$route'() {
-				this.menuactive = this.$route.path
+				this.menuactive = this.$route.path.split("/")[1]
+			}
+		},
+		methods: {
+			loginShow: function() {
+				this.drawerShow = true
+				this.drawerTitle = '登录'
+			},
+			logout: function() {
+				this.$Spin.show();
+				axios
+					.post(this.$store.state.API_ROOT + 'user/logout',
+						'user_id=' + this.user_id + '&token=' + this.$store.state.loginInfo.token)
+					.then(response => {
+						this.$Spin.hide();
+						this.$store.state.loginInfo.isLogin = false;
+						this.$store.state.loginInfo.user_id = '';
+						this.$store.state.loginInfo.token = '';
+						this.$Message.success('注销成功!');
+					}).catch(function(error) {
+						this.$Spin.hide();
+						console.log(error);
+					});
 			}
 		}
 	}

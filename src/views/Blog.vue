@@ -2,11 +2,8 @@
 	<Row>
 		<Col span="16">
 		<Content>
-
 			{{ $route.params.id }}
-			<Markdown :content="content" :highlight="highlight" style="margin:0 20px">
-
-			</Markdown>
+			<MarkdownShow v-model="content" />
 		</Content>
 		</Col>
 		<Col span="8">
@@ -18,23 +15,16 @@
 </template>
 
 <script>
-	import Markdown from 'iview-editor/src/lib/components/md.vue';
 	export default {
 		name: 'Blog',
 		data() {
 			return {
-				content: '',
-				highlight: function(code) {
-					return code;
-				}
+				content: ''
 			}
-		},
-		components: {
-			Markdown
 		},
 		mounted() {
 			axios
-				.get('http://api.codeoj.cn/blog')
+				.get(this.$store.state.API_ROOT+'blog')
 				.then(response => {
 					this.content = response.data
 				}).catch(function(error) {

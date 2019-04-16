@@ -33,7 +33,7 @@
 			<Col span="8">
 			<Sider width="100%" hide-trigger>
 				<div style="background-color: #f8f8f9;padding-top:20px;">
-					<Affix :offset-top="150">
+					
 						<Card style="margin: 10px;">
 							<p slot="title">
 								每日签到
@@ -62,7 +62,7 @@
 							</div>
 						</i-circle>
 
-					</Affix>
+					
 				</div>
 			</Sider>
 			</Col>

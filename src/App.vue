@@ -3,9 +3,7 @@
     <div class="layout container">
       <Layout>
         <OJHeader />
-		
         <router-view ></router-view>
-		
         <OJFooter />
       </Layout>
     </div>

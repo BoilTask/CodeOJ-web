@@ -2,8 +2,7 @@
 	<Row>
 		<Col span="16">
 		<Content>
-
-			{{ $route.params.id }}
+			<MarkdownShow v-model="content" />
 		</Content>
 		</Col>
 		<Col span="8">
@@ -16,32 +15,25 @@
 
 <script>
 	export default {
-		name: 'Problem',
+		name: 'Blog',
 		data() {
 			return {
-				problemLoading: true,
+				content: ''
 			}
 		},
 		mounted() {
 			axios
-				.get('http://api.codeoj.cn/problemlist?pagesize=' + this.problemPageSize + "&page=" + this.problemPage)
+				.get(this.$store.state.API_ROOT+'problem?id='+this.$route.params.id)
 				.then(response => {
-					console.log(response)
-					this.problemData = response.data.problemlist
-					this.problemCnt = this.problemData.length
-					this.problemData.forEach((val) => {
-						var tags = "";
-						val.tag.forEach((tag) => tags = tags + tag)
-						val.tag = tags
-					});
-					this.problemLoading = false;
+					this.content = response.data.description
 				}).catch(function(error) {
 					console.log(error);
-					
 				});
 		}
 	}
 </script>
 
 <style>
+
 </style>
+

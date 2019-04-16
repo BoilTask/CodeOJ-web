@@ -1,6 +1,5 @@
 <template>
-	<i-editor v-model="content"></i-editor>
-	
+	<mavon-editor v-model="content" />
 </template>
 
 <script>
