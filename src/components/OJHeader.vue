@@ -77,9 +77,7 @@
 				</Submenu>
 			</div>
 		</Menu>
-		<Drawer :title="drawerTitle" :closable="false" v-model="drawerShow">
-			<LoginForm></LoginForm>
-		</Drawer>
+
 	</Header>
 
 </template>
@@ -88,38 +86,21 @@
 	import {
 		mapState
 	} from 'vuex'
-	import LoginForm from './LoginForm.vue'
 	export default {
 		name: 'Ojheader',
-		components: {
-			LoginForm
-		},
 		data() {
 			return {
-				drawerTitle: ''
+
 			}
 		},
 		computed: {
-			menuactive: {
-				get: function() {
-					let url = this.$route.path
-					let activeName = url.split("/")[1]
-					if (activeName == "") {
-						activeName = "home"
-					}
-					return activeName
-				},
-				set: function(val) {
-
+			menuactive: function() {
+				let url = this.$route.path
+				let activeName = url.split("/")[1]
+				if (activeName == "") {
+					activeName = "home"
 				}
-			},
-			drawerShow: {
-				get: function() {
-					return this.$store.state.drawerShow
-				},
-				set: function(val) {
-					this.$store.state.drawerShow = val
-				}
+				return activeName
 			},
 			isLogin: function() {
 				return this.$store.state.loginInfo.isLogin
@@ -131,15 +112,10 @@
 					return '用户'
 			}
 		},
-		watch: {
-			'$route'() {
-				this.menuactive = this.$route.path.split("/")[1]
-			}
-		},
 		methods: {
 			loginShow: function() {
-				this.drawerShow = true
-				this.drawerTitle = '登录'
+				this.$store.commit('drawerChange', true)
+				this.$store.commit('drawerTitle', '登录')
 			},
 			logout: function() {
 				this.$Spin.show();
@@ -148,9 +124,8 @@
 						'user_id=' + this.user_id + '&token=' + this.$store.state.loginInfo.token)
 					.then(response => {
 						this.$Spin.hide();
-						this.$store.state.loginInfo.isLogin = false;
-						this.$store.state.loginInfo.user_id = '';
-						this.$store.state.loginInfo.token = '';
+						this.$store.commit('Logout')
+						this.$router.go(0)
 						this.$Message.success('注销成功!');
 					}).catch(function(error) {
 						this.$Spin.hide();

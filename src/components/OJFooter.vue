@@ -33,15 +33,15 @@
 				var h = currentTime.getHours()
 				var m = currentTime.getMinutes()
 				var s = currentTime.getSeconds()
-				return Y + "-" + M + "-" + D + " " + (h >= 10 ? h : "0" + h) + ":" + (m >= 10 ? m : "0" + m) + ":" + (s >= 10 ? s :
+				return Y + "/" + M + "/" + D + " " + (h >= 10 ? h : "0" + h) + ":" + (m >= 10 ? m : "0" + m) + ":" + (s >= 10 ? s :
 					"0" + s)
 			}
 		},
 		mounted() {
 			axios
-				.get('http://api.codeoj.cn/time')
+				.get(this.$store.state.API_ROOT +'time')
 				.then(response => (
-					this.time = response.data.time
+					this.time = response.data.data.time
 				))
 			setInterval(() => {
 				var currentTime = new Date(new Date(this.time).getTime() + 1000)
@@ -51,7 +51,7 @@
 				var h = currentTime.getHours();
 				var m = currentTime.getMinutes();
 				var s = currentTime.getSeconds();
-				this.time = Y + "-" + M + "-" + D + " " + (h >= 10 ? h : "0" + h) + ":" + (m >= 10 ? m : "0" + m) + ":" + (s >=
+				this.time = Y + "/" + M + "/" + D + " " + (h >= 10 ? h : "0" + h) + ":" + (m >= 10 ? m : "0" + m) + ":" + (s >=
 					10 ? s : "0" + s)
 			}, 1000)
 			

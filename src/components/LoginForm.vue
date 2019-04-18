@@ -27,12 +27,12 @@
                 },
                 ruleInline: {
                     user: [
-                        { required: true, message: 'Please fill in the user name', trigger: 'blur' },
-						{ type: 'string', min: 3, max: 20, message: 'The username length cannot be less than 6 bits', trigger: 'blur' }
-					],
+                        { required: true, message: '请输入用户名', trigger: 'blur' },
+                    	{ type: 'string', min: 3, max: 20, message: '所输用户名格式不符！', trigger: 'blur' }
+                    ],
                     password: [
-                        { required: true, message: 'Please fill in the password.', trigger: 'blur' },
-                        { type: 'string', min: 6, max: 20, message: 'The password length cannot be less than 6 bits', trigger: 'blur' }
+                        { required: true, message: '请输入密码', trigger: 'blur' },
+                        { type: 'string', min: 6, max: 20, message: '所输密码格式不符！', trigger: 'blur' }
                     ]
                 }
             }
@@ -48,11 +48,14 @@
 							.then(response => {
 								this.$Spin.hide();
 								if(response.data.ret==200 && response.data.data.isMatch){
-									this.$store.state.loginInfo.isLogin=true
-									this.$store.state.loginInfo.user_id=response.data.data.user_id
-									this.$store.state.loginInfo.token=response.data.data.token
+									
+									this.$store.commit('Login',{
+										  user_id: response.data.data.user_id,
+										  token:response.data.data.token,
+										})
+										
 									this.$Message.success('Success!');
-									this.$store.state.drawerShow = false
+									this.$store.commit('drawerChange',false)
 								}else{
 									if(response.data.msg=="")
 										this.$Message.error('登录失败，请检查输入！');
@@ -65,7 +68,7 @@
 								console.log(error);
 							});
                     } else {
-                        this.$Message.error('Fail!');
+                        this.$Message.error('请检查输入!');
                     }
                 })
             }

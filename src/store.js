@@ -1,17 +1,13 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 
-import VuexPersistence from 'vuex-persist'
-
 Vue.use(Vuex)
 
-export const USER_SIGNIN = 'USER_SIGNIN' //登录成功
-export const USER_SIGNOUT = 'USER_SIGNOUT' //退出登录
+import VuexPersistence from 'vuex-persist'
 
 const vuexLocal = new VuexPersistence({
 	storage: window.localStorage
 })
-
 
 export default new Vuex.Store({
 	state: {
@@ -21,30 +17,31 @@ export default new Vuex.Store({
 			user_id: '',
 			token: ''
 		},
-		drawerShow: false
-		// JSON.parse(sessionStorage.getItem('user')) || {}
+		drawerInfo: {
+			drawerTitle: '',
+			drawerShow: false
+		},
 	},
 	mutations: {
-		[USER_SIGNIN](state, user) {
-			sessionStorage.setItem('user', JSON.stringify(user))
-			Object.assign(state, user)
+		drawerChange(state, flag = true) {
+			Vue.set(state.drawerInfo, 'drawerShow', flag)
 		},
-		[USER_SIGNOUT](state) {
-			sessionStorage.removeItem('user')
-			Object.keys(state).forEach(k => Vue.delete(state, k))
+		drawerTitle(state, title = '') {
+			Vue.set(state.drawerInfo, 'drawerTitle', title)
+		},
+		Login(state, payload) {
+			Vue.set(state.loginInfo, 'isLogin', true)
+			Vue.set(state.loginInfo, 'user_id', payload.user_id)
+			Vue.set(state.loginInfo, 'token', payload.token)
+		},
+		Logout(state) {
+			Vue.set(state.loginInfo, 'isLogin', false)
+			Vue.set(state.loginInfo, 'user_id', '')
+			Vue.set(state.loginInfo, 'token', '')
 		}
 	},
 	actions: {
-		[USER_SIGNIN]({
-			commit
-		}, user) {
-			commit(USER_SIGNIN, user)
-		},
-		[USER_SIGNOUT]({
-			commit
-		}) {
-			commit(USER_SIGNOUT)
-		}
+
 	},
 	plugins: [vuexLocal.plugin]
 })

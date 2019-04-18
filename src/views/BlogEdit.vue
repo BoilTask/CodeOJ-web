@@ -1,5 +1,10 @@
 <template>
-	<mavon-editor v-model="content" />
+	<Content>
+		<p>123123</p>
+		<p>123123</p>
+		<p>123123</p>
+		<mavon-editor v-model="content" />
+	</Content>
 </template>
 
 <script>

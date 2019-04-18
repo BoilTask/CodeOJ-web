@@ -1,5 +1,6 @@
 <template>
-	<mavon-editor v-model="content" :editable="false" :toolbarsFlag="false" defaultOpen="preview" :subfield="false" />
+	<mavon-editor codeStyle='vs2015' v-model="content" :editable="false" :toolbarsFlag="false" defaultOpen="preview"
+	 :subfield="false" :ishljs="true" style="min-height: 0;" />
 </template>
 
 <script>
@@ -14,11 +15,12 @@
 		},
 		methods: {
 			change() {
-				alert(123);
+				
 			}
-		}
+		},
 	}
 </script>
 
-<style>
+<style scoped>
+	
 </style>

@@ -6,21 +6,22 @@
 
 				<Carousel v-model="carouselValue" :autoplay="carouselSetting.autoplay" :autoplay-speed="carouselSetting.autoplaySpeed"
 				 :dots="carouselSetting.dots" :radius-dot="carouselSetting.radiusDot" :trigger="carouselSetting.trigger" :arrow="carouselSetting.arrow"
-				style="min-height: 180px;"
-				>
+				 style="min-height: 180px;">
 					<CarouselItem v-for="(carouselItem,index) in carouseList">
-						<img :src="carouselItem.img" :alt="index" :style="{'width':'100%'}">
+						<a v-if="carouselItem.url!=''" :href="carouselItem.url">
+							<img :src="carouselItem.src" :alt="carouselItem.alt" :style="{'width':'100%'}">
+						</a>
+						<img v-else :src="carouselItem.src" :alt="carouselItem.alt" :style="{'width':'100%'}">
 					</CarouselItem>
 				</Carousel>
 
 				<Tabs value="name1">
-					<TabPane label="公告" name="name1" style="min-height: 600px;">
+					<TabPane label="公告" name="name1">
 						<Card v-for="(news,index) in newsList" :bordered="false" class="newsCard">
 							<p slot="title">{{news.title}}</p>
-							<Markdown :content="news.content" :highlight="highlight" style="margin:0 20px">
-							
-							</Markdown>
-							
+							<p slot="extra"><Icon type="ios-person-add-outline" />{{news.creator}}</p>
+							<MarkdownShow v-model="news.content" />
+
 						</Card>
 					</TabPane>
 					<TabPane label="下载" name="name2">
@@ -33,36 +34,47 @@
 			<Col span="8">
 			<Sider width="100%" hide-trigger>
 				<div style="background-color: #f8f8f9;padding-top:20px;">
-					
-						<Card style="margin: 10px;">
-							<p slot="title">
-								每日签到
-							</p>
-							<a style="color: #ed4014;" slot="extra" @click.prevent="changeLimit">
-								<Icon type="ios-bowtie" />
-								签到
-							</a>
-							<div class="flexDiv">
-								<!-- <Card size="300">
+					<Card style="margin: 10px;">
+						<p slot="title">
+							一言 © Hitokoto
+						</p>
+						<p slot="extra">
+							<Icon v-if="hitokotoCreator!=''" type="ios-person-add" />{{hitokotoCreator}}
+						</p>
+						<div style="padding: 20px;">
+							<span>{{hitokotoContent}}</span>
+							<p style="text-align: right">{{hitokotoFrom}}</p>
+							<Spin fix v-if="spinHitokoto"></Spin>
+						</div>
+					</Card>
+					<Card style="margin: 10px;">
+						<p slot="title">
+							每日签到
+						</p>
+						<a style="color: #ed4014;" slot="extra" @click.prevent="changeLimit">
+							<Icon type="ios-bowtie" />
+							签到
+						</a>
+						<div class="flexDiv">
+							<!-- <Card size="300">
 								<div style="text-align:center">
 									<img src="http://api.codeoj.cn/images/sign.jpg">
 								</div>
 							</Card> -->
 
-								<div>
-									<canvas id="rili" width="350px" height="200px" style="magin:0 auto;"></canvas>
-								</div>
-							</div>
-						</Card>
-						<i-circle :percent="circlePercent" :size="300" style="margin:20px">
 							<div>
-								<div style="font-size:32px">{{circlePercent}}%</div>
-								<div class="progressBox" style="font-size:24px">一日进度</div>
-								<div style="font-size:20px">{{currentTime}}</div>
+								<canvas id="rili" width="350px" height="200px" style="magin:0 auto;"></canvas>
 							</div>
-						</i-circle>
+						</div>
+					</Card>
+					<i-circle :percent="circlePercent" :size="300" style="margin:20px">
+						<div>
+							<div style="font-size:32px">{{circlePercent}}%</div>
+							<div class="progressBox" style="font-size:24px">一日进度</div>
+							<div style="font-size:20px">{{currentTime}}</div>
+						</div>
+					</i-circle>
 
-					
 				</div>
 			</Sider>
 			</Col>
@@ -71,7 +83,6 @@
 </template>
 
 <script>
-	import Markdown from 'iview-editor/src/lib/components/md.vue';
 	export default {
 		name: 'Home',
 		data() {
@@ -90,13 +101,11 @@
 				circlePercent: 0,
 				newsList: [],
 				newsShow: [],
-				highlight: function(code) {
-					return code;
-				}
+				hitokotoContent: '',
+				hitokotoCreator: '',
+				hitokotoFrom: '',
+				spinHitokoto: true
 			}
-		},
-		components: {
-			Markdown
 		},
 		methods: {
 			getTime: function() {
@@ -107,7 +116,7 @@
 				var h = currentTime.getHours()
 				var m = currentTime.getMinutes()
 				var s = currentTime.getSeconds()
-				return Y + "-" + M + "-" + D + " " + (h >= 10 ? h : "0" + h) + ":" + (m >= 10 ? m : "0" + m) + ":" + (s >= 10 ? s :
+				return Y + "/" + M + "/" + D + " " + (h >= 10 ? h : "0" + h) + ":" + (m >= 10 ? m : "0" + m) + ":" + (s >= 10 ? s :
 					"0" + s)
 			},
 			drawRili: function() {
@@ -256,18 +265,27 @@
 			}
 		},
 		mounted() {
-			this.$Spin.show()
+			
 			axios
-				.get('http://api.codeoj.cn/home')
+				.get(this.$store.state.API_ROOT +'home')
 				.then(response => {
-					this.currentTime = response.data.time
-					this.carouseList = response.data.carouse
-					this.newsList = response.data.news
+					this.currentTime = response.data.data.time
+					this.carouseList = response.data.data.carouse
+					this.newsList = response.data.data.news
 
-					this.$Spin.hide()
 				}).catch(function(error) {
 					console.log(error);
-					this.$Spin.hide()
+				});
+				
+			axios.get('https://v1.hitokoto.cn')
+				.then(response => {
+					this.hitokotoContent = response.data.hitokoto
+					this.hitokotoCreator = response.data.creator
+					this.hitokotoFrom = "—— " + response.data.from
+					this.spinHitokoto = false
+				}).catch(function(error) {
+					console.log(error);
+
 				});
 			setInterval(() => {
 				var currentTime = new Date(new Date(this.currentTime).getTime() + 1000)
@@ -277,7 +295,7 @@
 				var h = currentTime.getHours();
 				var m = currentTime.getMinutes();
 				var s = currentTime.getSeconds();
-				this.currentTime = Y + "-" + M + "-" + D + " " + (h >= 10 ? h : "0" + h) + ":" + (m >= 10 ? m : "0" + m) + ":" +
+				this.currentTime = Y + "/" + M + "/" + D + " " + (h >= 10 ? h : "0" + h) + ":" + (m >= 10 ? m : "0" + m) + ":" +
 					(s >=
 						10 ? s : "0" + s)
 
@@ -285,7 +303,7 @@
 				var M = currentTime.getMonth() + 1;
 				var D = currentTime.getDate();
 
-				var todayTime = new Date(Y + "-" + M + "-" + D + " 0:0:0")
+				var todayTime = new Date(Y + "/" + M + "/" + D + " 0:0:0")
 				this.circlePercent = parseFloat(((currentTime.getTime() - todayTime.getTime()) / 864000.0).toFixed(2));
 			}, 1000)
 			this.drawRili()
@@ -293,7 +311,7 @@
 	}
 </script>
 
-<style>
+<style scoped>
 	.newsCard {
 		width: 80%;
 		margin: 20px auto;

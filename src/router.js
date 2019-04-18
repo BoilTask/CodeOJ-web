@@ -9,7 +9,7 @@ export default new Router({
 	routes: [{
 			path: '/',
 			name: 'Home',
-			component: () => import( /* webpackChunkName: "about" */ './views/Home.vue'),
+			component: () => import('./views/Home.vue'),
 			meta: {
 				title: '代码在线评测平台 - CodeOJ'
 			}
@@ -17,7 +17,7 @@ export default new Router({
 		{
 			path: '/problem',
 			name: 'ProblemList',
-			component: () => import( /* webpackChunkName: "about" */ './views/ProblemList.vue'),
+			component: () => import('./views/ProblemList.vue'),
 			meta: {
 				title: '问题列表 - CodeOJ'
 			}
@@ -25,15 +25,23 @@ export default new Router({
 		{
 			path: '/problem/:id',
 			name: 'Problem',
-			component: () => import( /* webpackChunkName: "about" */ './views/Problem.vue'),
+			component: () => import('./views/Problem.vue'),
 			meta: {
 				title: '问题 - CodeOJ'
 			}
 		},
 		{
+			path: '/problem/:id/edit',
+			name: 'ProblemEdit',
+			component: () => import('./views/ProblemEdit.vue'),
+			meta: {
+				title: '问题编辑 - CodeOJ'
+			}
+		},
+		{
 			path: '/blog/:id',
 			name: 'Blog',
-			component: () => import( /* webpackChunkName: "about" */ './views/Blog.vue'),
+			component: () => import('./views/Blog.vue'),
 			meta: {
 				title: '文章 - CodeOJ'
 			}
@@ -41,9 +49,18 @@ export default new Router({
 		{
 			path: '/blog/:id/edit',
 			name: 'BlogEdit',
-			component: () => import( /* webpackChunkName: "about" */ './views/BlogEdit.vue'),
+			component: () => import('./views/BlogEdit.vue'),
 			meta: {
+				privilege: true,
 				title: '文章编辑 - CodeOJ'
+			}
+		},
+		{
+			path: '/error',
+			name: 'Error',
+			component: () => import('./views/Error.vue'),
+			meta: {
+				title: '错误 - CodeOJ'
 			}
 		},
 		{
