@@ -15,12 +15,14 @@ import 'mavon-editor/dist/css/index.css'
 // use
 Vue.use(mavonEditor)
 
-import VueKatex from 'vue-katex'
-import 'katex/dist/katex.min.css';
-Vue.use(VueKatex)
-
 import MarkdownShow from './components/MarkdownShow'
 Vue.use(MarkdownShow)
+
+import Cookies from 'js-cookie'
+
+import vueTencentCaptcha from '@carpenter/vue-tencent-captcha';
+  
+Vue.use(vueTencentCaptcha);
 
 function RouterError(errmsg) {
 	router.push({
@@ -33,24 +35,34 @@ function RouterError(errmsg) {
 }
 
 router.beforeEach((to, from, next) => {
-console.log(to);
-	if (to.meta.privilege != null && to.meta.privilege) {
-		if (store.state.loginInfo.isLogin && store.state.loginInfo.token != '' && store.state.loginInfo.user_id != '') {
-			axios.post(store.state.API_ROOT + 'auth',
-					'user_id=' + store.state.loginInfo.user + '&token=' + store.state.loginInfo.token+'&path='+to.fullPath)
-				.then(response => {
-					if (response.data.ret == 200) {
-						next();
-					} else {
-						RouterError('无权限')
-					}
-				}).catch(function(error) {
-					console.log(error);
-					RouterError('连接服务器失败！')
-				});
-		} else {
-			RouterError('请先登录')
+	if (!store.state.loginInfo.isLogin) {
+		let cookieInfo = Cookies.getJSON('loginInfo')
+		if (cookieInfo) {
+			store.state.loginInfo = cookieInfo
 		}
+	}
+	if (to.meta.auth != null && to.meta.auth) {
+		// if (store.state.loginInfo.isLogin && store.state.loginInfo.token != '' && store.state.loginInfo.user_id != '') {
+		axios.post(store.state.API_ROOT + 'auth',
+				'user_id=' + store.state.loginInfo.user_id + '&token=' + store.state.loginInfo.token + '&path=' + to.fullPath)
+			.then(response => {
+				if (response.data.ret == 200 && response.data.data) {
+					iView.LoadingBar.start();
+					iView.Spin.show()
+					if (to.meta.title) {
+						document.title = to.meta.title
+					}
+					next();
+				} else {
+					RouterError('无权限或信息有误！')
+				}
+			}).catch(function(error) {
+				console.log(error);
+				RouterError('连接服务器失败！')
+			});
+		// } else {
+		// RouterError('请先登录')
+		// }
 	} else {
 		iView.LoadingBar.start();
 		iView.Spin.show()

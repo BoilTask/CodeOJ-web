@@ -35,6 +35,7 @@ export default new Router({
 			name: 'ProblemEdit',
 			component: () => import('./views/ProblemEdit.vue'),
 			meta: {
+				auth: true,
 				title: '问题编辑 - CodeOJ'
 			}
 		},
@@ -43,6 +44,7 @@ export default new Router({
 			name: 'Blog',
 			component: () => import('./views/Blog.vue'),
 			meta: {
+				auth: true,
 				title: '文章 - CodeOJ'
 			}
 		},
@@ -51,9 +53,54 @@ export default new Router({
 			name: 'BlogEdit',
 			component: () => import('./views/BlogEdit.vue'),
 			meta: {
-				privilege: true,
+				auth: true,
 				title: '文章编辑 - CodeOJ'
 			}
+		},
+		{
+			path: '/user/:id',
+			name: 'User',
+			component: () => import('./views/User.vue'),
+			meta: {
+				auth: true,
+				title: '用户 - CodeOJ'
+			}
+		},
+		{
+			path: '/manage*',
+			component: () => import('./views/Manage.vue'),
+			children: [{
+					path: 'user',
+					component: () => import('./views/ManageUser.vue'),
+					meta: {
+						auth: true,
+						title: '编辑资料 - CodeOJ'
+					},
+				},{
+					path: 'userinfo',
+					component: () => import('./views/ManageUserInfo.vue'),
+					meta: {
+						auth: true,
+						title: '更新信息 - CodeOJ'
+					},
+				}, {
+					path: 'blog',
+					component: () => import('./views/ManageBlog.vue'),
+					meta: {
+						auth: true,
+						title: '文章管理 - CodeOJ'
+					},
+				},
+				{
+					path: '',
+					name: 'Manage',
+					component: () => import('./views/ManageUser.vue'),
+					meta: {
+						auth: true,
+						title: '信息编辑 - CodeOJ'
+					},
+				},
+			]
 		},
 		{
 			path: '/error',
@@ -65,7 +112,7 @@ export default new Router({
 		},
 		{
 			path: "*",
-			redirect: "/"
+			redirect: "/error"
 		}
 	]
 })

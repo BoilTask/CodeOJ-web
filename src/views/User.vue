@@ -2,24 +2,28 @@
 	<Row>
 		<Col span="16">
 		<Content>
-			<MarkdownShow class="blogContent" v-model="content" />
+			<div style="padding: 10px;background: #f8f8f9">
+				<Card title="博客文章" icon="ios-leaf">
+					<CellGroup>
+						<Cell v-for="(blog,index) in blogData" :title="blog.title" :to="'/blog/'+blog.blog_id" >
+							<span slot="extra"><Icon type="md-git-pull-request" /><Time :time="blog.insert_time" /></span>
+						</Cell>
+					</CellGroup>
+				</Card>
+			</div>
 		</Content>
 		</Col>
 		<Col span="8">
 		<Sider width="100%" hide-trigger>
 			<div style="background-color: #f8f8f9; padding: 10px;">
 				<Card class="UserCard">
-					<p slot="title">作者信息</p>
+					<p slot="title">用户信息</p>
 					<p slot="extra">
-						<Button :to="'/user/'+creator"><Icon type="ios-person-add" />{{creator}}</Button></p>
-					<div v-if="creatorImg!=''" style="text-align:center">
-						<img :src="creatorImg">
+						<Icon type="ios-person-add" />{{user}}</p>
+					<div v-if="userImg!=''" style="text-align:center">
+						<img :src="userImg">
 					</div>
 					<Table :columns="tableCol" :data="userData" :show-header="false"></Table>
-				</Card>
-				<Card class="BlogCard">
-					<p slot="title">文章信息</p>
-					<Table :columns="tableCol" :data="blogData" :show-header="false"></Table>
 				</Card>
 			</div>
 		</Sider>
@@ -28,14 +32,13 @@
 </template>
 
 <script>
-	// import Clipboard from 'clipboard';
 	export default {
-		name: 'Blog',
+		name: 'User',
 		data() {
 			return {
 				content: '',
-				creator: '',
-				creatorImg: '',
+				user: '',
+				userImg: '',
 				tableCol: [{
 						key: 'name'
 					},
@@ -75,13 +78,12 @@
 				params.append('token', this.$store.state.loginInfo.token);
 			}
 			axios
-				.get(this.$store.state.API_ROOT + 'blog/' + this.$route.params.id+"?"+params.toString())
+				.get(this.$store.state.API_ROOT + 'user/' + this.$route.params.id+"?"+params.toString())
 				.then(response => {
-					document.title = response.data.data.blog.title + " - CodeOJ"
-					this.content = "# " + response.data.data.blog.title + '\n' + response.data.data.blog.content
-					this.creator = response.data.data.blog.creator
-					this.userData = response.data.data.creator
-					this.creatorImg = response.data.data.creatorImg
+					this.user = response.data.data.user_id
+					document.title = this.user + " - CodeOJ"
+					this.userData = response.data.data.userData
+					this.userImg = response.data.data.userImg
 					this.blogData = response.data.data.blogData
 				}).catch(function(error) {
 					console.log(error);

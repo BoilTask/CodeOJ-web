@@ -18,43 +18,51 @@
 <script>
 	export default {
 		name: 'OJFooter',
-		data() {
-			return {
-				API_ROOT: this.$store.state.API_ROOT,
-				time: this.getTime()
+		computed: {
+			time: {
+				get: function() {
+					return this.$store.state.server_time
+				},
+				set: function(val) {
+					this.$store.commit('setTime', val)
+				}
 			}
 		},
 		methods: {
-			getTime: function() {
-				var currentTime = new Date(new Date(this.time==null?(new Date()):this.time).getTime() + 1000)
+			exchangeTime: function(nowTime) {
+				nowTime=nowTime.toString().replace(/-/g,"/")
+				var currentTime = new Date(nowTime)
 				var Y = currentTime.getYear() + 1900
 				var M = currentTime.getMonth() + 1
 				var D = currentTime.getDate()
 				var h = currentTime.getHours()
 				var m = currentTime.getMinutes()
 				var s = currentTime.getSeconds()
-				return Y + "/" + M + "/" + D + " " + (h >= 10 ? h : "0" + h) + ":" + (m >= 10 ? m : "0" + m) + ":" + (s >= 10 ? s :
+				return Y + "-" + M + "-" + D + " " + (h >= 10 ? h : "0" + h) + ":" + (m >= 10 ? m : "0" + m) + ":" + (s >= 10 ? s :
 					"0" + s)
+			},
+			nextTime: function(nowTime) {
+				nowTime=nowTime.toString().replace(/-/g,"/")
+				var currentTime = new Date(new Date(nowTime).getTime() + 1000)
+				return this.exchangeTime(currentTime)
+			},
+			getTime: function() {
+				var currentTime = (this.time == '' ? (new Date()) : this.time)
+				return this.exchangeTime(currentTime)
 			}
 		},
 		mounted() {
+			this.time = this.getTime()
 			axios
-				.get(this.$store.state.API_ROOT +'time')
+				.get(this.$store.state.API_ROOT + 'time')
 				.then(response => (
-					this.time = response.data.data.time
+					this.time = this.exchangeTime(response.data.data.time)
 				))
+				
 			setInterval(() => {
-				var currentTime = new Date(new Date(this.time).getTime() + 1000)
-				var Y = currentTime.getYear() + 1900;
-				var M = currentTime.getMonth() + 1;
-				var D = currentTime.getDate();
-				var h = currentTime.getHours();
-				var m = currentTime.getMinutes();
-				var s = currentTime.getSeconds();
-				this.time = Y + "/" + M + "/" + D + " " + (h >= 10 ? h : "0" + h) + ":" + (m >= 10 ? m : "0" + m) + ":" + (s >=
-					10 ? s : "0" + s)
+				this.time = this.nextTime(this.time)
 			}, 1000)
-			
+
 		}
 	}
 </script>

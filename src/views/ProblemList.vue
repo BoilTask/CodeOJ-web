@@ -133,7 +133,7 @@
 </script>
 </script>
 
-<style>
+<style scoped>
 	.pageBar {
 		margin: 10px 0;
 	}

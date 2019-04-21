@@ -3,15 +3,12 @@ import Vuex from 'vuex'
 
 Vue.use(Vuex)
 
-import VuexPersistence from 'vuex-persist'
-
-const vuexLocal = new VuexPersistence({
-	storage: window.localStorage
-})
+import Cookies from 'js-cookie'
 
 export default new Vuex.Store({
 	state: {
 		API_ROOT: 'http://apidev.codeoj.cn/',
+		server_time: '',
 		loginInfo: {
 			isLogin: false,
 			user_id: '',
@@ -33,15 +30,16 @@ export default new Vuex.Store({
 			Vue.set(state.loginInfo, 'isLogin', true)
 			Vue.set(state.loginInfo, 'user_id', payload.user_id)
 			Vue.set(state.loginInfo, 'token', payload.token)
+			Cookies.set('loginInfo',state.loginInfo)
 		},
 		Logout(state) {
 			Vue.set(state.loginInfo, 'isLogin', false)
 			Vue.set(state.loginInfo, 'user_id', '')
 			Vue.set(state.loginInfo, 'token', '')
+			Cookies.remove('loginInfo')
+		},
+		setTime(state,time){
+			state.server_time=time
 		}
-	},
-	actions: {
-
-	},
-	plugins: [vuexLocal.plugin]
+	}
 })

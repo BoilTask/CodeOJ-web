@@ -50,6 +50,7 @@
 				.then(response => {
 					this.problemId = response.data.data.problemInfo.problem_id
 					this.problemTitle = " - " + response.data.data.problemInfo.title
+					document.title = this.problemId + this.problemTitle + " - CodeOJ"
 					this.description = response.data.data.problemInfo.description
 					this.hint = response.data.data.problemInfo.hint
 					this.problemData = response.data.data.problemInfo.problemData

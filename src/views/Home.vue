@@ -15,20 +15,26 @@
 					</CarouselItem>
 				</Carousel>
 
-				<Tabs value="name1">
-					<TabPane label="公告" name="name1">
+				<Tabs value="news" type="card">
+					<TabPane label="公告" icon="ios-menu" name="news">
 						<Card v-for="(news,index) in newsList" :bordered="false" class="newsCard">
 							<p slot="title">{{news.title}}</p>
 							<p slot="extra"><Icon type="ios-person-add-outline" />{{news.creator}}</p>
 							<MarkdownShow v-model="news.content" />
-
 						</Card>
 					</TabPane>
-					<TabPane label="下载" name="name2">
-						可以下载的内容
+					<TabPane label="信息" icon="md-bulb" name="name2">
+						<Card class="newsCard">
+							<p slot="title">资料整合</p>
+							<div style="padding: 15px;">
+								<ul>
+									<li><router-link to="/blog/1">更新日志</router-link></li>
+									<li><router-link to="/blog/2">系统帮助 & FAQ</router-link></li>
+								</ul>
+							</div>
+						</Card>
 					</TabPane>
 				</Tabs>
-
 			</Content>
 			</Col>
 			<Col span="8">
@@ -56,12 +62,6 @@
 							签到
 						</a>
 						<div class="flexDiv">
-							<!-- <Card size="300">
-								<div style="text-align:center">
-									<img src="http://api.codeoj.cn/images/sign.jpg">
-								</div>
-							</Card> -->
-
 							<div>
 								<canvas id="rili" width="350px" height="200px" style="magin:0 auto;"></canvas>
 							</div>
@@ -71,7 +71,7 @@
 						<div>
 							<div style="font-size:32px">{{circlePercent}}%</div>
 							<div class="progressBox" style="font-size:24px">一日进度</div>
-							<div style="font-size:20px">{{currentTime}}</div>
+							<div style="font-size:20px">{{this.$store.state.server_time}}</div>
 						</div>
 					</i-circle>
 
@@ -87,7 +87,6 @@
 		name: 'Home',
 		data() {
 			return {
-				currentTime: this.getTime(),
 				carouselValue: 0,
 				carouselSetting: {
 					autoplay: true,
@@ -108,17 +107,6 @@
 			}
 		},
 		methods: {
-			getTime: function() {
-				var currentTime = new Date(new Date().getTime() + 1000)
-				var Y = currentTime.getYear() + 1900
-				var M = currentTime.getMonth() + 1
-				var D = currentTime.getDate()
-				var h = currentTime.getHours()
-				var m = currentTime.getMinutes()
-				var s = currentTime.getSeconds()
-				return Y + "/" + M + "/" + D + " " + (h >= 10 ? h : "0" + h) + ":" + (m >= 10 ? m : "0" + m) + ":" + (s >= 10 ? s :
-					"0" + s)
-			},
 			drawRili: function() {
 				var rili = document.getElementById("rili");
 				var riliCtx = rili.getContext("2d");
@@ -265,18 +253,16 @@
 			}
 		},
 		mounted() {
-			
+
 			axios
-				.get(this.$store.state.API_ROOT +'home')
+				.get(this.$store.state.API_ROOT + 'home')
 				.then(response => {
-					this.currentTime = response.data.data.time
 					this.carouseList = response.data.data.carouse
 					this.newsList = response.data.data.news
-
 				}).catch(function(error) {
 					console.log(error);
 				});
-				
+
 			axios.get('https://v1.hitokoto.cn')
 				.then(response => {
 					this.hitokotoContent = response.data.hitokoto
@@ -288,23 +274,14 @@
 
 				});
 			setInterval(() => {
-				var currentTime = new Date(new Date(this.currentTime).getTime() + 1000)
-				var Y = currentTime.getYear() + 1900;
-				var M = currentTime.getMonth() + 1;
-				var D = currentTime.getDate();
-				var h = currentTime.getHours();
-				var m = currentTime.getMinutes();
-				var s = currentTime.getSeconds();
-				this.currentTime = Y + "/" + M + "/" + D + " " + (h >= 10 ? h : "0" + h) + ":" + (m >= 10 ? m : "0" + m) + ":" +
-					(s >=
-						10 ? s : "0" + s)
+				var currentTime = new Date(this.$store.state.server_time.replace(/-/g, "/"))
 
 				var Y = currentTime.getYear() + 1900;
 				var M = currentTime.getMonth() + 1;
 				var D = currentTime.getDate();
 
 				var todayTime = new Date(Y + "/" + M + "/" + D + " 0:0:0")
-				this.circlePercent = parseFloat(((currentTime.getTime() - todayTime.getTime()) / 864000.0).toFixed(2));
+				this.circlePercent = parseFloat(((currentTime.getTime() - todayTime.getTime()) / 864000.0).toFixed(3));
 			}, 1000)
 			this.drawRili()
 		}
@@ -314,6 +291,7 @@
 <style scoped>
 	.newsCard {
 		width: 80%;
+		padding: 5px;
 		margin: 20px auto;
 	}
 
