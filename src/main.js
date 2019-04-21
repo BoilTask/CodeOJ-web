@@ -21,7 +21,7 @@ Vue.use(MarkdownShow)
 import Cookies from 'js-cookie'
 
 import vueTencentCaptcha from '@carpenter/vue-tencent-captcha';
-  
+
 Vue.use(vueTencentCaptcha);
 
 function RouterError(errmsg) {
@@ -40,6 +40,10 @@ router.beforeEach((to, from, next) => {
 		if (cookieInfo) {
 			store.state.loginInfo = cookieInfo
 		}
+	}
+	let API_ROOT = Cookies.getJSON('API_ROOT')
+	if (API_ROOT) {
+		store.state.API_ROOT = API_ROOT
 	}
 	if (to.meta.auth != null && to.meta.auth) {
 		// if (store.state.loginInfo.isLogin && store.state.loginInfo.token != '' && store.state.loginInfo.user_id != '') {

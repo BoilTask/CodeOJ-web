@@ -19,7 +19,8 @@
 					<TabPane label="公告" icon="ios-menu" name="news">
 						<Card v-for="(news,index) in newsList" :bordered="false" class="newsCard">
 							<p slot="title">{{news.title}}</p>
-							<p slot="extra"><Icon type="ios-person-add-outline" />{{news.creator}}</p>
+							<p slot="extra">
+								<Icon type="ios-person-add-outline" />{{news.creator}}</p>
 							<MarkdownShow v-model="news.content" />
 						</Card>
 					</TabPane>
@@ -28,9 +29,33 @@
 							<p slot="title">资料整合</p>
 							<div style="padding: 15px;">
 								<ul>
-									<li><router-link to="/blog/1">更新日志</router-link></li>
-									<li><router-link to="/blog/2">系统帮助 & FAQ</router-link></li>
+									<li>
+										<router-link to="/blog/1">更新日志</router-link>
+									</li>
+									<li>
+										<router-link to="/blog/2">系统帮助 & FAQ</router-link>
+									</li>
 								</ul>
+							</div>
+						</Card>
+						<Card class="newsCard">
+							<p slot="title">端口设置</p>
+							<div style="padding: 15px;">
+								<p>
+									<Select v-model="serverAPIROOT" style="width: 250px;">
+										<span slot="prefix">后台地址：</span>
+										<Option value="https://api.codeoj.cn/">https://api.codeoj.cn/</Option>
+										<Option value="http://apidev.codeoj.cn/">http://apidev.codeoj.cn/</Option>
+									</Select>
+								</p>
+								<p>
+									<ul class="list">
+										<li>主域名：<Button><a href="https://codeoj.cn">https://codeoj.cn</a></Button></li>
+										<li>coding.net代理：<Button><a href="http://coding.codeoj.cn">http://coding.codeoj.cn</a></Button></li>
+										<li>github.com代理：<Button><a href="http://github.codeoj.cn">http://github.codeoj.cn</a></Button></li>
+										<li>开发环境：<Button><a href="http://localhost:8080">http://localhost:8080</a></Button></li>
+									</ul>
+								</p>
 							</div>
 						</Card>
 					</TabPane>
@@ -104,6 +129,17 @@
 				hitokotoCreator: '',
 				hitokotoFrom: '',
 				spinHitokoto: true
+			}
+		},
+		computed: {
+			serverAPIROOT: {
+				get: function() {
+					return this.$store.state.API_ROOT
+				},
+				set: function(val) {
+					this.$store.commit('changeAPIROOT', val)
+					this.$Message.success('修改后台端口成功!');
+				}
 			}
 		},
 		methods: {
@@ -301,5 +337,9 @@
 		padding: 15px;
 		border: solid 2px #2db7f5;
 		border-radius: 50px;
+	}
+
+	.list li {
+		margin: 10px;
 	}
 </style>

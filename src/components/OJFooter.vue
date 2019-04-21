@@ -2,7 +2,7 @@
 	<Footer class="footer">
 		<BackTop></BackTop>
 		<div class="footer-left">
-			{{time}}
+			<p>{{time}}</p>
 		</div>
 		<div>
 			<Button to="//www.miitbeian.gov.cn" target="_blank" ghost>
@@ -10,7 +10,7 @@
 			</Button>
 		</div>
 		<div class="footer-right">
-			<span>Copyright © CodeOJ</span>
+			<p>Copyright © CodeOJ</p>
 		</div>
 	</Footer>
 </template>
@@ -30,7 +30,7 @@
 		},
 		methods: {
 			exchangeTime: function(nowTime) {
-				nowTime=nowTime.toString().replace(/-/g,"/")
+				nowTime = nowTime.toString().replace(/-/g, "/")
 				var currentTime = new Date(nowTime)
 				var Y = currentTime.getYear() + 1900
 				var M = currentTime.getMonth() + 1
@@ -42,7 +42,7 @@
 					"0" + s)
 			},
 			nextTime: function(nowTime) {
-				nowTime=nowTime.toString().replace(/-/g,"/")
+				nowTime = nowTime.toString().replace(/-/g, "/")
 				var currentTime = new Date(new Date(nowTime).getTime() + 1000)
 				return this.exchangeTime(currentTime)
 			},
@@ -58,7 +58,7 @@
 				.then(response => (
 					this.time = this.exchangeTime(response.data.data.time)
 				))
-				
+
 			setInterval(() => {
 				this.time = this.nextTime(this.time)
 			}, 1000)
@@ -74,11 +74,4 @@
 		color: #FFFFFF;
 		background-color: #212121;
 	}
-
-	/* 	.footer-left{
-		float: left;
-	}
-	.footer-right{
-		float: right;
-	} */
 </style>
