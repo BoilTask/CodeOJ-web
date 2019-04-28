@@ -8,8 +8,12 @@
 			</Layout>
 		</div>
 		<Drawer v-on:on-close="drawerClose" :title="drawerTitle" v-model="drawerShow">
-			<LoginForm></LoginForm>
+			<LoginForm v-if="drawerContent=='LoginForm'"></LoginForm>
+			<RegisterForm v-else></RegisterForm>
 		</Drawer>
+		<Modal v-model="modalShow" :title="modalTitle" @on-ok="modalOk" @on-cancel="modalCancel">
+			<ForgetPassword v-if="modalContent=='ForgetPassword'"></ForgetPassword>
+		</Modal>
 	</div>
 </template>
 
@@ -17,12 +21,16 @@
 	import OJHeader from './components/OJHeader.vue'
 	import OJFooter from './components/OJFooter.vue'
 	import LoginForm from './components/LoginForm.vue'
+	import RegisterForm from './components/RegisterForm.vue'
+	import ForgetPassword from './components/ForgetPassword.vue'
 	export default {
 		name: 'app',
 		components: {
 			OJHeader,
 			OJFooter,
-			LoginForm
+			LoginForm,
+			RegisterForm,
+			ForgetPassword
 		},
 		computed: {
 			drawerShow: {
@@ -41,10 +49,38 @@
 					this.$store.commit('drawerTitle', val)
 				}
 			},
+			drawerContent: function() {
+				return this.$store.state.drawerInfo.drawerContent
+			},
+			modalShow: {
+				get: function() {
+					return this.$store.state.modalInfo.modalShow
+				},
+				set: function(val) {
+					this.$store.commit('modalChange', val)
+				}
+			},
+			modalTitle: {
+				get: function() {
+					return this.$store.state.modalInfo.modalTitle
+				},
+				set: function(val) {
+					this.$store.commit('modalTitle', val)
+				}
+			},
+			modalContent: function() {
+				return this.$store.state.modalInfo.modalContent
+			},
 		},
 		methods: {
 			drawerClose: function() {
 				this.drawerTitle = '';
+			},
+			modalOk:function(){
+				
+			},
+			modalCancel:function(){
+				
 			}
 		},
 	}

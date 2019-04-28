@@ -35,10 +35,8 @@
 						<p slot="title">文章信息</p>
 						<p slot="extra">
 							<Button type="primary" :loading="btnLoading" @click="handleSubmit('formValidate')">提交</Button>
-							<Button type="error" :to="'/blog/'+this.$route.params.id">查看</Button>
 						</p>
-						
-						<Table :columns="tableCol" :data="blogData" :show-header="false"></Table>
+						<Table :show-header="false"></Table>
 					</Card>
 
 				</div>
@@ -56,7 +54,7 @@
 		name: 'BlogEdit',
 		data() {
 			return {
-				btnLoading:true,
+				btnLoading: false,
 				formValidate: {
 					title: '',
 					tags: '',
@@ -70,96 +68,65 @@
 					}],
 				},
 				content: '',
-				tableCol: [{
-						key: 'name'
-					},
-					{
-						key: 'info'
-					}
-				],
-				blogData: []
 			}
-		},
-		mounted() {
-			var params = new URLSearchParams();
-			if(this.$store.state.loginInfo.isLogin){
-				params.append('user_id', this.$store.state.loginInfo.user_id);
-				params.append('token', this.$store.state.loginInfo.token);
-			}
-			axios
-				.get(this.$store.state.API_ROOT + 'blog/' + this.$route.params.id+"?"+params.toString())
-				.then(response => {
-					
-					this.formValidate.title = response.data.data.blog.title
-					this.formValidate.privilege = (response.data.data.blog.privilege==1?true:false)
-					
-					this.content = response.data.data.blog.content
-					let temp = Array()
-					temp[0] = response.data.data.blogData[0]
-					temp[1] = response.data.data.blogData[1]
-					this.blogData = temp
-					let tags = response.data.data.blogData[2]['info']
-					for (let i = 0, len = tags.length; i < len; i++) {
-						if (i > 0)
-							this.formValidate.tags += ","
-						this.formValidate.tags += tags[i]['name']
-					}
-					this.btnLoading=false
-				}).catch(function(error) {
-					console.log(error);
-				});
 		},
 		methods: {
 			saveContent: function() {
-				this.$Spin.show();
-				var params = new URLSearchParams();
-				params.append('user_id', this.$store.state.loginInfo.user_id);
-				params.append('token', this.$store.state.loginInfo.token);
-				params.append('content', this.content);
-				this.btnLoading=true
-				axios
-					.post(this.$store.state.API_ROOT + 'blog/' + this.$route.params.id + '/edit', params)
-					.then(response => {
-						if (response.data.data.is_ok) {
-							this.blogData[1]['info'] = this.$store.state.server_time
-							this.$Message.success('保存成功！');
-						} else
+				if (this.formValidate.title == '') {
+					this.$Message.error('请先输入标题！');
+				} else {
+					this.$Spin.show();
+					var params = new URLSearchParams();
+					params.append('user_id', this.$store.state.loginInfo.user_id);
+					params.append('token', this.$store.state.loginInfo.token);
+					params.append('title', this.formValidate.title);
+					params.append('privilege', this.formValidate.privilege ? 1 : 0);
+					params.append('tags', this.formValidate.tags);
+					params.append('content', this.content);
+					this.btnLoading = true
+					axios
+						.post(this.$store.state.API_ROOT + 'blog/add', params)
+						.then(response => {
+							if (response.data.data.is_ok) {
+								this.$Message.success('保存成功！');
+								this.$router.push('/blog/'+response.data.data.blog_id+'/edit')
+							} else
+								this.$Message.error('保存失败！');
+							this.btnLoading = false
+							this.$Spin.hide();
+						}).catch(function(error) {
 							this.$Message.error('保存失败！');
-						this.btnLoading=false
-						this.$Spin.hide();
-					}).catch(function(error) {
-						this.$Message.error('保存失败！');
-						this.btnLoading=false
-						this.$Spin.hide();
-					});
+							this.btnLoading = false
+							this.$Spin.hide();
+						});
+				}
 			},
 			handleSubmit(name) {
 				this.$refs[name].validate((valid) => {
 					if (valid) {
 						this.$Spin.show();
-						this.btnLoading=true
+						this.btnLoading = true
 						var params = new URLSearchParams();
 						params.append('user_id', this.$store.state.loginInfo.user_id);
 						params.append('token', this.$store.state.loginInfo.token);
 						params.append('title', this.formValidate.title);
-						params.append('privilege', this.formValidate.privilege?1:0);
+						params.append('privilege', this.formValidate.privilege ? 1 : 0);
 						params.append('tags', this.formValidate.tags);
 						params.append('content', this.content);
 						axios
-							.post(this.$store.state.API_ROOT + 'blog/' + this.$route.params.id + '/edit',params)
+							.post(this.$store.state.API_ROOT + 'blog/add', params)
 							.then(response => {
 								this.$Spin.hide();
 								if (response.data.data.is_ok) {
-									this.blogData[1]['info'] = this.$store.state.server_time
-									this.btnLoading=false
 									this.$Message.success('保存成功！');
-								} else{
-									this.btnLoading=false
+									this.$router.push('/blog/'+response.data.data.blog_id+'/edit')
+								} else {
 									this.$Message.error('保存失败！');
 								}
+								this.btnLoading = false
 							}).catch(function(error) {
 								this.$Spin.hide();
-								this.btnLoading=false
+								this.btnLoading = false
 								this.$Message.error('保存失败！');
 							});
 					} else {

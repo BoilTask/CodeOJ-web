@@ -11,7 +11,9 @@
 				<Card class="UserCard">
 					<p slot="title">作者信息</p>
 					<p slot="extra">
-						<Button :to="'/user/'+creator"><Icon type="ios-person-add" />{{creator}}</Button></p>
+						<Button :to="'/user/'+creator">
+							<Icon type="ios-person-add" />{{creator}}</Button>
+					</p>
 					<div v-if="creatorImg!=''" style="text-align:center">
 						<img :src="creatorImg">
 					</div>
@@ -19,6 +21,9 @@
 				</Card>
 				<Card class="BlogCard">
 					<p slot="title">文章信息</p>
+					<p slot="extra">
+						<Button v-if="isEdit" :to="'/blog/'+this.$route.params.id+'/edit'" type="error">编辑</Button>
+					</p>
 					<Table :columns="tableCol" :data="blogData" :show-header="false"></Table>
 				</Card>
 			</div>
@@ -33,6 +38,7 @@
 		name: 'Blog',
 		data() {
 			return {
+				isEdit: false,
 				content: '',
 				creator: '',
 				creatorImg: '',
@@ -43,21 +49,23 @@
 						key: 'info',
 						render: (h, params) => {
 							if (Array.isArray(params.row.info)) {
-								let Vnode = Array()
-								params.row.info.forEach(((item, index) => {
-									Vnode.push(h('Button', {
-											props: {
-												type: index & 1 ? 'info' : 'success',
-												size: 'small',
-												to: '/blog/tag/' + item.name
+								if (params.row.info.length) {
+									let Vnode = Array()
+									params.row.info.forEach(((item, index) => {
+										Vnode.push(h('Button', {
+												props: {
+													type: index & 1 ? 'info' : 'success',
+													size: 'small',
+													to: '/blog/tag/' + item.name
+												},
+												style: "margin:0 1px"
 											},
-											style: "margin:0 1px"
-										},
-										item.name
-									))
-								}))
-								return h('div', Vnode);
-
+											item.name
+										))
+									}))
+									return h('div', Vnode);
+								}
+								return h('span', '无');
 							} else {
 								return h('span', params.row.info);
 							}
@@ -66,16 +74,17 @@
 				],
 				userData: [],
 				blogData: []
+
 			}
 		},
 		mounted() {
 			var params = new URLSearchParams();
-			if(this.$store.state.loginInfo.isLogin){
+			if (this.$store.state.loginInfo.isLogin) {
 				params.append('user_id', this.$store.state.loginInfo.user_id);
 				params.append('token', this.$store.state.loginInfo.token);
 			}
 			axios
-				.get(this.$store.state.API_ROOT + 'blog/' + this.$route.params.id+"?"+params.toString())
+				.get(this.$store.state.API_ROOT + 'blog/' + this.$route.params.id + "?" + params.toString())
 				.then(response => {
 					document.title = response.data.data.blog.title + " - CodeOJ"
 					this.content = "# " + response.data.data.blog.title + '\n' + response.data.data.blog.content
@@ -83,6 +92,9 @@
 					this.userData = response.data.data.creator
 					this.creatorImg = response.data.data.creatorImg
 					this.blogData = response.data.data.blogData
+					if (this.creator === this.$store.state.loginInfo.user_id) {
+						this.isEdit = true
+					}
 				}).catch(function(error) {
 					console.log(error);
 				});

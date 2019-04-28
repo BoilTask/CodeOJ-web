@@ -4,6 +4,9 @@
 		<Content>
 			<div style="padding: 10px;background: #f8f8f9">
 				<Card title="博客文章" icon="ios-leaf">
+					<p slot="extra">
+						<Button :to="'/blog?user='+user">More</Button>
+					</p>
 					<CellGroup>
 						<Cell v-for="(blog,index) in blogData" :title="blog.title" :to="'/blog/'+blog.blog_id" >
 							<span slot="extra"><Icon type="md-git-pull-request" /><Time :time="blog.insert_time" /></span>
@@ -19,7 +22,8 @@
 				<Card class="UserCard">
 					<p slot="title">用户信息</p>
 					<p slot="extra">
-						<Icon type="ios-person-add" />{{user}}</p>
+						<Icon type="ios-person-add" />{{user}}
+					</p>
 					<div v-if="userImg!=''" style="text-align:center">
 						<img :src="userImg">
 					</div>

@@ -14,9 +14,11 @@
 				<Col span="16">
 
 				<Button v-if="email_flag==1" disabled>验证完成</Button>
-				<span v-else><Input v-model="email_key" placeholder="验证码区分大小写"><Button slot="prepend">
+				<span v-else><Input v-model="email_key" placeholder="验证码区分大小写">
+					<Button slot="prepend">
 						<vueTencentCaptcha appid="2081307488" @callback="sendEmailKey">发送验证码</vueTencentCaptcha>
-					</Button><Button slot="append" v-on:click="verifyEmailKey">点击验证</Button></Input></span>
+					</Button>
+					<Button slot="append" v-on:click="verifyEmailKey">点击验证</Button></Input></span>
 				</Col>
 			</Row>
 			</p>
@@ -52,27 +54,29 @@
 		},
 		methods: {
 			sendEmailKey(ticket) {
-				this.email_status = 'process'
-				var params = new URLSearchParams();
-				params.append('token', this.$store.state.loginInfo.token);
-				params.append('ticket', ticket.ticket);
-				params.append('randStr', ticket.randstr);
-				axios
-					.post(this.$store.state.API_ROOT + 'user/' + this.$store.state.loginInfo.user_id + '/email/get', params)
-					.then(response => {
-						this.$Spin.hide();
-						if (response.data.data.is_ok) {
-							this.email_step = 1
-							this.$Message.success('发送成功！');
-						} else {
+				if (!ticket.ret) {
+					this.$Message.info('正在尝试发送验证码……');
+					this.email_status = 'process'
+					var params = new URLSearchParams();
+					params.append('token', this.$store.state.loginInfo.token);
+					params.append('ticket', ticket.ticket);
+					params.append('randStr', ticket.randstr);
+					axios
+						.post(this.$store.state.API_ROOT + 'user/' + this.$store.state.loginInfo.user_id + '/email/get', params)
+						.then(response => {
+							if (response.data.data.is_ok) {
+								this.email_step = 1
+								this.$Message.success('发送成功！');
+							} else {
+								this.email_step = 0
+								this.email_status = 'error'
+								this.$Message.error('发送失败！');
+							}
+						}).catch(function(error) {
 							this.email_status = 'error'
 							this.$Message.error('发送失败！');
-						}
-					}).catch(function(error) {
-						this.$Spin.hide();
-						this.email_status = 'error'
-						this.$Message.error('发送失败！');
-					});
+						});
+				}
 			},
 			verifyEmailKey() {
 				if (this.email_key.length != 6) {

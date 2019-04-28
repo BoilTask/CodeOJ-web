@@ -85,7 +85,7 @@
 					<Icon type="md-log-in" />
 					登录
 					</MenuItem>
-					<MenuItem name="register">
+					<MenuItem name="register" @click.native="registerShow">
 					<Icon type="ios-rose" />
 					注册
 					</MenuItem>
@@ -126,6 +126,12 @@
 			loginShow: function() {
 				this.$store.commit('drawerChange', true)
 				this.$store.commit('drawerTitle', '登录')
+				this.$store.commit('drawerContent', 'LoginForm')
+			},
+			registerShow: function() {
+				this.$store.commit('drawerChange', true)
+				this.$store.commit('drawerTitle', '注册')
+				this.$store.commit('drawerContent', 'RegisterForm')
 			},
 			logout: function() {
 				this.$Spin.show();

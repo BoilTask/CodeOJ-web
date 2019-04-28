@@ -9,19 +9,12 @@
 						<FormItem label="标题" prop="title">
 							<Input v-model="formValidate.title" placeholder="title"></Input>
 						</FormItem>
-						<FormItem label="标签" prop="tags">
-							<Input v-model="formValidate.tags" placeholder="tags"></Input>
-							<p>
-								<Icon type="ios-information-circle-outline" />多个标签请以英文逗号“,”隔开
-							</p>
-						</FormItem>
 						<FormItem label="权限" prop="privilege">
 							<i-switch v-model="formValidate.privilege" size="large">
 								<span slot="open">私有</span>
 								<span slot="close">公开</span>
 							</i-switch>
 						</FormItem>
-
 					</Form>
 
 				</Card>
@@ -31,14 +24,14 @@
 			<Sider width="100%" hide-trigger>
 				<div style="background-color: #f8f8f9; padding: 5px;">
 
-					<Card class="BlogCard">
-						<p slot="title">文章信息</p>
+					<Card class="NewsCard">
+						<p slot="title">新闻信息</p>
 						<p slot="extra">
 							<Button type="primary" :loading="btnLoading" @click="handleSubmit('formValidate')">提交</Button>
-							<Button type="error" :to="'/blog/'+this.$route.params.id">查看</Button>
+							<Button type="error" to='/manage/news'>列表</Button>
 						</p>
 						
-						<Table :columns="tableCol" :data="blogData" :show-header="false"></Table>
+						<Table :columns="tableCol" :data="newsData" :show-header="false"></Table>
 					</Card>
 
 				</div>
@@ -53,13 +46,12 @@
 
 <script>
 	export default {
-		name: 'BlogEdit',
+		name: 'NewsEdit',
 		data() {
 			return {
 				btnLoading:true,
 				formValidate: {
 					title: '',
-					tags: '',
 					privilege: false
 				},
 				ruleValidate: {
@@ -77,7 +69,7 @@
 						key: 'info'
 					}
 				],
-				blogData: []
+				newsData: []
 			}
 		},
 		mounted() {
@@ -87,23 +79,17 @@
 				params.append('token', this.$store.state.loginInfo.token);
 			}
 			axios
-				.get(this.$store.state.API_ROOT + 'blog/' + this.$route.params.id+"?"+params.toString())
+				.get(this.$store.state.API_ROOT + 'news/' + this.$route.params.id+"?"+params.toString())
 				.then(response => {
 					
-					this.formValidate.title = response.data.data.blog.title
-					this.formValidate.privilege = (response.data.data.blog.privilege==1?true:false)
+					this.formValidate.title = response.data.data.news.title
+					this.formValidate.privilege = (response.data.data.news.privilege==1?true:false)
 					
-					this.content = response.data.data.blog.content
+					this.content = response.data.data.news.content
 					let temp = Array()
-					temp[0] = response.data.data.blogData[0]
-					temp[1] = response.data.data.blogData[1]
-					this.blogData = temp
-					let tags = response.data.data.blogData[2]['info']
-					for (let i = 0, len = tags.length; i < len; i++) {
-						if (i > 0)
-							this.formValidate.tags += ","
-						this.formValidate.tags += tags[i]['name']
-					}
+					temp[0] = response.data.data.newsData[0]
+					temp[1] = response.data.data.newsData[1]
+					this.newsData = temp
 					this.btnLoading=false
 				}).catch(function(error) {
 					console.log(error);
@@ -118,10 +104,10 @@
 				params.append('content', this.content);
 				this.btnLoading=true
 				axios
-					.post(this.$store.state.API_ROOT + 'blog/' + this.$route.params.id + '/edit', params)
+					.post(this.$store.state.API_ROOT + 'news/' + this.$route.params.id + '/edit', params)
 					.then(response => {
 						if (response.data.data.is_ok) {
-							this.blogData[1]['info'] = this.$store.state.server_time
+							this.newsData[1]['info'] = this.$store.state.server_time
 							this.$Message.success('保存成功！');
 						} else
 							this.$Message.error('保存失败！');
@@ -146,11 +132,11 @@
 						params.append('tags', this.formValidate.tags);
 						params.append('content', this.content);
 						axios
-							.post(this.$store.state.API_ROOT + 'blog/' + this.$route.params.id + '/edit',params)
+							.post(this.$store.state.API_ROOT + 'news/' + this.$route.params.id + '/edit',params)
 							.then(response => {
 								this.$Spin.hide();
 								if (response.data.data.is_ok) {
-									this.blogData[1]['info'] = this.$store.state.server_time
+									this.newsData[1]['info'] = this.$store.state.server_time
 									this.btnLoading=false
 									this.$Message.success('保存成功！');
 								} else{

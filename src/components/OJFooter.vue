@@ -38,7 +38,7 @@
 				var h = currentTime.getHours()
 				var m = currentTime.getMinutes()
 				var s = currentTime.getSeconds()
-				return Y + "-" + M + "-" + D + " " + (h >= 10 ? h : "0" + h) + ":" + (m >= 10 ? m : "0" + m) + ":" + (s >= 10 ? s :
+				return Y + "-" + (M >= 10 ? M : "0" + M) + "-" + D + " " + (h >= 10 ? h : "0" + h) + ":" + (m >= 10 ? m : "0" + m) + ":" + (s >= 10 ? s :
 					"0" + s)
 			},
 			nextTime: function(nowTime) {

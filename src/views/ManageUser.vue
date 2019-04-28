@@ -6,13 +6,13 @@
 					<Input v-model="formValidate.user_id" placeholder="userid" disabled></Input>
 				</FormItem>
 				<FormItem label="原密码" prop="old_password">
-					<Input v-model="formValidate.old_password" placeholder="oldpassword"></Input>
+					<Input type="password" v-model="formValidate.old_password" placeholder="oldpassword"></Input>
 				</FormItem>
 				<FormItem label="新密码" prop="new_password">
-					<Input v-model="formValidate.new_password" placeholder="newpassword"></Input>
+					<Input type="password" v-model="formValidate.new_password" placeholder="newpassword"></Input>
 				</FormItem>
 				<FormItem label="请确认" prop="repeat_password">
-					<Input v-model="formValidate.repeat_password" placeholder="repeatpassword"></Input>
+					<Input type="password" v-model="formValidate.repeat_password" placeholder="repeatpassword"></Input>
 				</FormItem>
 				<FormItem label="昵称" prop="nickname">
 					<Input v-model="formValidate.nickname" placeholder="nickname"></Input>
@@ -104,8 +104,9 @@
 					}],
 					new_password: [{
 						required: false,
-						message: '密码最少为6位！',
+						message: '密码为6位到20位字符！',
 						min: 6,
+						max: 20,
 						trigger: 'blur'
 					}],
 					repeat_password: [{
@@ -114,7 +115,9 @@
 					}],
 					nickname: [{
 						required: true,
-						message: '昵称不能为空！',
+						message: '昵称为1~20位！',
+						min: 1,
+						max: 20,
 						trigger: 'blur'
 					}],
 					email: [{

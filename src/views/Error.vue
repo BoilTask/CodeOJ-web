@@ -8,7 +8,7 @@
 			</Alert>
 			<Card style="width:100%">
 				<div style="text-align:center">
-					<img src="https://api.jysafe.cn/randacgimg" style="width: 100%;">
+					<img src="https://api.jysafe.cn/randacgimg" alt="访问出现错误!" style="width: 100%;">
 				</div>
 			</Card>
 		</Content>

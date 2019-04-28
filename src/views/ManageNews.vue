@@ -6,11 +6,6 @@
 				<span slot="prepend">标题：</span>
 				</Input>
 			</FormItem>
-			<FormItem prop="tags">
-				<Input type="text" v-model="filterData.tags" placeholder="Tags">
-				<span slot="prepend">标签：</span>
-				</Input>
-			</FormItem>
 			<FormItem>
 				<Select v-model="filterData.privilege">
 					<span slot="prefix">权限：</span>
@@ -20,43 +15,42 @@
 				</Select>
 			</FormItem>
 			<FormItem>
-				<Button type="primary" @click="filterBlog">筛选</Button>
-				<Button type="error" to="/blog/add">新建</Button>
+				<Button type="primary" @click="filterNews">筛选</Button>
+				<Button type="error" to="/news/add">新建</Button>
 			</FormItem>
 		</Form>
-		<Page :total="blogCnt" :page-size="blogPageSize" :current="blogPage" @on-change="changePage" show-elevator show-total
+		<Page :total="newsCnt" :page-size="newsPageSize" :current="newsPage" @on-change="changePage" show-elevator show-total
 		 class="pageBar" />
-		<Table stripe :columns="blogColumns" :data="blogData" :loading="blogLoading"></Table>
-		<Page :total="blogCnt" :page-size="blogPageSize" :current="blogPage" @on-change="changePage" show-elevator show-total
+		<Table stripe :columns="newsColumns" :data="newsData" :loading="newsLoading"></Table>
+		<Page :total="newsCnt" :page-size="newsPageSize" :current="newsPage" @on-change="changePage" show-elevator show-total
 		 class="pageBar" />
 	</Content>
 </template>
 
 <script>
 	export default {
-		name: 'ManageBlog',
+		name: 'ManageNews',
 		data() {
 			return {
-				blogLoading: true,
-				blogCnt: 0,
-				blogPageSize: 50,
+				newsLoading: true,
+				newsCnt: 0,
+				newsPageSize: 50,
 				filterData: {
 					title: '',
-					tags: '',
 					privilege: 0
 				},
-				blogColumns: [{
+				newsColumns: [{
 						title: '#',
-						key: 'blog_id',
+						key: 'news_id',
 						width: 80,
 						render: (h, params) => {
 							return h('Button', {
 								props: {
 									type: 'dashed',
 									size: 'small',
-									to: '/blog/' + params.row.blog_id
+									to: '/news/' + params.row.news_id + '/edit'
 								}
-							}, params.row.blog_id);
+							}, params.row.news_id);
 						}
 					}, {
 						title: '标题',
@@ -65,29 +59,9 @@
 							return h('Button', {
 								props: {
 									type: 'dashed',
-									to: '/blog/' + params.row.blog_id
+									to: '/news/' + params.row.news_id + '/edit'
 								}
 							}, params.row.title);
-						}
-					},
-					{
-						title: '标签',
-						key: 'tag',
-						render: (h, params) => {
-							let Vnode = Array()
-							params.row.tag.forEach(((item, index) => {
-								Vnode.push(h('Button', {
-										props: {
-											type: index & 1 ? 'info' : 'success',
-											size: 'small',
-											to: '/blog/tag/' + item.name
-										},
-										style: "margin:0 1px"
-									},
-									item.name
-								))
-							}))
-							return h('div', Vnode);
 						}
 					},
 					{
@@ -109,7 +83,7 @@
 							Vnode.push(h('Button', {
 									props: {
 										type: 'primary',
-										to: '/blog/' + params.row.blog_id + '/edit'
+										to: '/news/' + params.row.news_id + '/edit'
 									},
 									style: "margin:0 1px"
 								},
@@ -119,11 +93,11 @@
 						}
 					},
 				],
-				blogData: []
+				newsData: []
 			}
 		},
 		computed: {
-			blogPage: function() {
+			newsPage: function() {
 				if (this.$route.query['page'])
 					return parseInt(this.$route.query['page'])
 				else
@@ -131,55 +105,52 @@
 			}
 		},
 		mounted() {
-			this.getBlogList()
+			this.getNewsList()
 		},
 		watch: {
 			'$route'(to, from) {
-				this.getBlogList()
+				this.getNewsList()
 			}
 		},
 		methods: {
 			changePage(val) {
 				this.$router.push({
-					path: '/manage/blog',
+					path: '/manage/news',
 					query: {
 						page: val
 					}
 				})
 			},
-			getBlogList() {
-				this.blogLoading = true;
+			getNewsList() {
+				this.newsLoading = true;
 				var params = new URLSearchParams();
 				params.append('user_id', this.$store.state.loginInfo.user_id);
 				params.append('token', this.$store.state.loginInfo.token);
-				params.append('user', this.$store.state.loginInfo.user_id);
 				axios
-					.get(this.$store.state.API_ROOT + 'blog/list/' + this.blogPage + "?" + params.toString())
+					.get(this.$store.state.API_ROOT + 'news/list/' + this.newsPage + "?" + params.toString())
 					.then(response => {
-						this.blogData = response.data.data.blogList
-						this.blogCnt = response.data.data.total
-						this.blogPageSize = response.data.data.pageSize
-						this.blogLoading = false;
+						this.newsData = response.data.data.newsList
+						this.newsCnt = response.data.data.total
+						this.newsPageSize = response.data.data.pageSize
+						this.newsLoading = false;
 					}).catch(function(error) {
 						console.log(error);
 					});
 			},
-			filterBlog() {
-				this.blogLoading = true;
+			filterNews() {
+				this.newsLoading = true;
 				var params = new URLSearchParams();
 				params.append('user_id', this.$store.state.loginInfo.user_id);
 				params.append('token', this.$store.state.loginInfo.token);
-				params.append('user', this.$store.state.loginInfo.user_id);
 				params.append('title', this.filterData.title);
-				params.append('tags', this.filterData.tags);
 				params.append('privilege', this.filterData.privilege);
 				axios
-					.get(this.$store.state.API_ROOT + 'blog/list/' + this.blogPage + "?" + params.toString())
+					.get(this.$store.state.API_ROOT + 'news/list/' + this.newsPage + "?" + params.toString())
 					.then(response => {
-						this.blogData = response.data.data.blogList
-						this.blogCnt = response.data.data.total
-						this.blogPageSize = response.data.data.pageSize
-						this.blogLoading = false;
+						this.newsData = response.data.data.newsList
+						this.newsCnt = response.data.data.total
+						this.newsPageSize = response.data.data.pageSize
+						this.newsLoading = false;
 					}).catch(function(error) {
 						console.log(error);
 					});

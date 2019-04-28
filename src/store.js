@@ -16,7 +16,15 @@ export default new Vuex.Store({
 		},
 		drawerInfo: {
 			drawerTitle: '',
+			drawerContent:'',
 			drawerShow: false
+			
+		},
+		modalInfo: {
+			modalTitle: '',
+			modalContent:'',
+			modalShow: false
+			
 		},
 	},
 	mutations: {
@@ -29,6 +37,28 @@ export default new Vuex.Store({
 		},
 		drawerTitle(state, title = '') {
 			Vue.set(state.drawerInfo, 'drawerTitle', title)
+		},
+		drawerContent(state, content = '') {
+			Vue.set(state.drawerInfo, 'drawerContent', content)
+		},
+		drawerClose(state){
+			Vue.set(state.drawerInfo, 'drawerShow', false)
+			Vue.set(state.drawerInfo, 'drawerContent', '')
+			Vue.set(state.drawerInfo, 'drawerTitle', '')
+		},
+		modalChange(state, flag = true) {
+			Vue.set(state.modalInfo, 'modalShow', flag)
+		},
+		modalTitle(state, title = '') {
+			Vue.set(state.modalInfo, 'modalTitle', title)
+		},
+		modalContent(state, content = '') {
+			Vue.set(state.modalInfo, 'modalContent', content)
+		},
+		modalClose(state){
+			Vue.set(state.modalInfo, 'modalShow', false)
+			Vue.set(state.modalInfo, 'modalContent', '')
+			Vue.set(state.modalInfo, 'modalTitle', '')
 		},
 		Login(state, payload) {
 			Vue.set(state.loginInfo, 'isLogin', true)

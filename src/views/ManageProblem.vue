@@ -1,29 +1,5 @@
 <template>
 	<Content style="text-align: center;padding: 20px;">
-		<Form ref="filterData" :model="filterData" inline>
-			<FormItem prop="title">
-				<Input type="text" v-model="filterData.title" placeholder="Title">
-				<span slot="prepend">标题：</span>
-				</Input>
-			</FormItem>
-			<FormItem prop="tags">
-				<Input type="text" v-model="filterData.tags" placeholder="Tags">
-				<span slot="prepend">标签：</span>
-				</Input>
-			</FormItem>
-			<FormItem>
-				<Select v-model="filterData.privilege">
-					<span slot="prefix">权限：</span>
-					<Option :value="0" :key="0">全部</Option>
-					<Option :value="1" :key="1">公开</Option>
-					<Option :value="2" :key="2">私有</Option>
-				</Select>
-			</FormItem>
-			<FormItem>
-				<Button type="primary" @click="filterBlog">筛选</Button>
-				<Button type="error" to="/blog/add">新建</Button>
-			</FormItem>
-		</Form>
 		<Page :total="blogCnt" :page-size="blogPageSize" :current="blogPage" @on-change="changePage" show-elevator show-total
 		 class="pageBar" />
 		<Table stripe :columns="blogColumns" :data="blogData" :loading="blogLoading"></Table>
@@ -34,17 +10,12 @@
 
 <script>
 	export default {
-		name: 'ManageBlog',
+		name: 'ManageProblem',
 		data() {
 			return {
 				blogLoading: true,
 				blogCnt: 0,
 				blogPageSize: 50,
-				filterData: {
-					title: '',
-					tags: '',
-					privilege: 0
-				},
 				blogColumns: [{
 						title: '#',
 						key: 'blog_id',
@@ -91,17 +62,6 @@
 						}
 					},
 					{
-						title: '权限',
-						key: 'privilege',
-						render: (h, params) => {
-							return h('Tag', {
-								props: {
-									color: params.row.privilege == 0 ? "success" : "error",
-								}
-							}, params.row.privilege == 0 ? "公开" : "私有");
-						}
-					},
-					{
 						title: '操作',
 						key: 'op',
 						render: (h, params) => {
@@ -109,7 +69,7 @@
 							Vnode.push(h('Button', {
 									props: {
 										type: 'primary',
-										to: '/blog/' + params.row.blog_id + '/edit'
+										to: '/blog/' + params.row.blog_id+'/edit'
 									},
 									style: "margin:0 1px"
 								},
@@ -119,7 +79,7 @@
 						}
 					},
 				],
-				blogData: []
+				blogData: [],
 			}
 		},
 		computed: {
@@ -153,26 +113,6 @@
 				params.append('user_id', this.$store.state.loginInfo.user_id);
 				params.append('token', this.$store.state.loginInfo.token);
 				params.append('user', this.$store.state.loginInfo.user_id);
-				axios
-					.get(this.$store.state.API_ROOT + 'blog/list/' + this.blogPage + "?" + params.toString())
-					.then(response => {
-						this.blogData = response.data.data.blogList
-						this.blogCnt = response.data.data.total
-						this.blogPageSize = response.data.data.pageSize
-						this.blogLoading = false;
-					}).catch(function(error) {
-						console.log(error);
-					});
-			},
-			filterBlog() {
-				this.blogLoading = true;
-				var params = new URLSearchParams();
-				params.append('user_id', this.$store.state.loginInfo.user_id);
-				params.append('token', this.$store.state.loginInfo.token);
-				params.append('user', this.$store.state.loginInfo.user_id);
-				params.append('title', this.filterData.title);
-				params.append('tags', this.filterData.tags);
-				params.append('privilege', this.filterData.privilege);
 				axios
 					.get(this.$store.state.API_ROOT + 'blog/list/' + this.blogPage + "?" + params.toString())
 					.then(response => {
