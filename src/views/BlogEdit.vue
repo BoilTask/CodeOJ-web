@@ -37,7 +37,7 @@
 							<Button type="primary" :loading="btnLoading" @click="handleSubmit('formValidate')">提交</Button>
 							<Button type="error" :to="'/blog/'+this.$route.params.id">查看</Button>
 						</p>
-						
+
 						<Table :columns="tableCol" :data="blogData" :show-header="false"></Table>
 					</Card>
 
@@ -46,7 +46,7 @@
 			</Col>
 		</Row>
 		<Card>
-			<mavon-editor v-model="content" style="min-height: 600px;" v-on:save="saveContent" />
+			<mavon-editor ref="editor" @imgAdd="$imgAdd" v-model="content" style="min-height: 600px;" v-on:save="saveContent" />
 		</Card>
 	</Content>
 </template>
@@ -56,7 +56,7 @@
 		name: 'BlogEdit',
 		data() {
 			return {
-				btnLoading:true,
+				btnLoading: true,
 				formValidate: {
 					title: '',
 					tags: '',
@@ -77,22 +77,23 @@
 						key: 'info'
 					}
 				],
-				blogData: []
+				blogData: [],
+				uploadToken: ''
 			}
 		},
 		mounted() {
 			var params = new URLSearchParams();
-			if(this.$store.state.loginInfo.isLogin){
+			if (this.$store.state.loginInfo.isLogin) {
 				params.append('user_id', this.$store.state.loginInfo.user_id);
 				params.append('token', this.$store.state.loginInfo.token);
 			}
 			axios
-				.get(this.$store.state.API_ROOT + 'blog/' + this.$route.params.id+"?"+params.toString())
+				.get(this.$store.state.API_ROOT + 'blog/' + this.$route.params.id + "?" + params.toString())
 				.then(response => {
-					
+
 					this.formValidate.title = response.data.data.blog.title
-					this.formValidate.privilege = (response.data.data.blog.privilege==1?true:false)
-					
+					this.formValidate.privilege = (response.data.data.blog.privilege == 1 ? true : false)
+
 					this.content = response.data.data.blog.content
 					let temp = Array()
 					temp[0] = response.data.data.blogData[0]
@@ -104,7 +105,7 @@
 							this.formValidate.tags += ","
 						this.formValidate.tags += tags[i]['name']
 					}
-					this.btnLoading=false
+					this.btnLoading = false
 				}).catch(function(error) {
 					console.log(error);
 				});
@@ -116,7 +117,7 @@
 				params.append('user_id', this.$store.state.loginInfo.user_id);
 				params.append('token', this.$store.state.loginInfo.token);
 				params.append('content', this.content);
-				this.btnLoading=true
+				this.btnLoading = true
 				axios
 					.post(this.$store.state.API_ROOT + 'blog/' + this.$route.params.id + '/edit', params)
 					.then(response => {
@@ -125,11 +126,11 @@
 							this.$Message.success('保存成功！');
 						} else
 							this.$Message.error('保存失败！');
-						this.btnLoading=false
+						this.btnLoading = false
 						this.$Spin.hide();
 					}).catch(function(error) {
 						this.$Message.error('保存失败！');
-						this.btnLoading=false
+						this.btnLoading = false
 						this.$Spin.hide();
 					});
 			},
@@ -137,35 +138,63 @@
 				this.$refs[name].validate((valid) => {
 					if (valid) {
 						this.$Spin.show();
-						this.btnLoading=true
+						this.btnLoading = true
 						var params = new URLSearchParams();
 						params.append('user_id', this.$store.state.loginInfo.user_id);
 						params.append('token', this.$store.state.loginInfo.token);
 						params.append('title', this.formValidate.title);
-						params.append('privilege', this.formValidate.privilege?1:0);
+						params.append('privilege', this.formValidate.privilege ? 1 : 0);
 						params.append('tags', this.formValidate.tags);
 						params.append('content', this.content);
 						axios
-							.post(this.$store.state.API_ROOT + 'blog/' + this.$route.params.id + '/edit',params)
+							.post(this.$store.state.API_ROOT + 'blog/' + this.$route.params.id + '/edit', params)
 							.then(response => {
 								this.$Spin.hide();
 								if (response.data.data.is_ok) {
 									this.blogData[1]['info'] = this.$store.state.server_time
-									this.btnLoading=false
+									this.btnLoading = false
 									this.$Message.success('保存成功！');
-								} else{
-									this.btnLoading=false
+								} else {
+									this.btnLoading = false
 									this.$Message.error('保存失败！');
 								}
 							}).catch(function(error) {
 								this.$Spin.hide();
-								this.btnLoading=false
+								this.btnLoading = false
 								this.$Message.error('保存失败！');
 							});
 					} else {
 						this.$Message.error('请检查输入!');
 					}
 				})
+			},
+			$imgAdd(pos, $file) {
+				this.$Spin.show();
+				axios.get(this.$store.state.API_ROOT + 'upload/token')
+					.then(response => {
+						this.uploadToken = response.data.data.token
+
+						var params = new URLSearchParams();
+						params.append('token', this.uploadToken);
+						params.append('file', $file);
+
+						var formdata = new FormData();
+						formdata.append('token', this.uploadToken)
+						formdata.append('file', $file)
+						
+						axios
+							.post('https://upload.qiniup.com', formdata)
+							.then(response => {
+								this.$refs.editor.$img2Url(pos, this.$store.state.CDN_ROOT+response.data.key)
+								this.$Spin.hide()
+								this.$Message.success('图片上传成功！')
+							}).catch(function(error) {
+								console.log(error);
+							});
+
+					}).catch(function(error) {
+						console.log(error);
+					});
 			}
 		},
 	}

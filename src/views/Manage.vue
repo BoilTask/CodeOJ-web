@@ -69,7 +69,7 @@
 			params.append('user_id', this.$store.state.loginInfo.user_id);
 			params.append('token', this.$store.state.loginInfo.token);
 			axios
-				.post(this.$store.state.API_ROOT + 'auth/' + this.$route.params.id + '/administrator', params)
+				.post(this.$store.state.API_ROOT + 'auth/administrator', params)
 				.then(response => {
 					this.isAdministrator = response.data.data;
 					this.$Spin.hide();

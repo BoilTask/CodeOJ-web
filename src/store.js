@@ -8,6 +8,7 @@ import Cookies from 'js-cookie'
 export default new Vuex.Store({
 	state: {
 		API_ROOT: 'https://api.codeoj.cn/',
+		CDN_ROOT: 'http://cdn.codeoj.cn/',
 		server_time: '',
 		loginInfo: {
 			isLogin: false,

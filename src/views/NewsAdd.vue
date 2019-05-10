@@ -38,7 +38,7 @@
 			</Col>
 		</Row>
 		<Card>
-			<mavon-editor v-model="content" style="min-height: 600px;" v-on:save="saveContent" />
+			<mavon-editor ref="editor" @imgAdd="$imgAdd" v-model="content" style="min-height: 600px;" v-on:save="saveContent" />
 		</Card>
 	</Content>
 </template>
@@ -124,6 +124,34 @@
 						this.$Message.error('请检查输入!');
 					}
 				})
+			},
+			$imgAdd(pos, $file) {
+				this.$Spin.show();
+				axios.get(this.$store.state.API_ROOT + 'upload/token')
+					.then(response => {
+						this.uploadToken = response.data.data.token
+
+						var params = new URLSearchParams();
+						params.append('token', this.uploadToken);
+						params.append('file', $file);
+
+						var formdata = new FormData();
+						formdata.append('token', this.uploadToken)
+						formdata.append('file', $file)
+						
+						axios
+							.post('https://upload.qiniup.com', formdata)
+							.then(response => {
+								this.$refs.editor.$img2Url(pos, this.$store.state.CDN_ROOT+response.data.key)
+								this.$Spin.hide()
+								this.$Message.success('图片上传成功！')
+							}).catch(function(error) {
+								console.log(error);
+							});
+
+					}).catch(function(error) {
+						console.log(error);
+					});
 			}
 		},
 	}

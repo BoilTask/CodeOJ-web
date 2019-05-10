@@ -131,6 +131,9 @@
 			}
 		},
 		mounted() {
+			this.filterData.title=this.$route.query['title']?this.$route.query['title']:''
+			this.filterData.tags=this.$route.query['tags']?this.$route.query['tags']:''
+			this.filterData.privilege=this.$route.query['privilege']?this.$route.query['privilege']:0
 			this.getBlogList()
 		},
 		watch: {
@@ -143,7 +146,7 @@
 				this.$router.push({
 					path: '/manage/blog',
 					query: {
-						page: val
+						page: val,
 					}
 				})
 			},
@@ -153,6 +156,9 @@
 				params.append('user_id', this.$store.state.loginInfo.user_id);
 				params.append('token', this.$store.state.loginInfo.token);
 				params.append('user', this.$store.state.loginInfo.user_id);
+				params.append('title', this.filterData.title);
+				params.append('tags', this.filterData.tags);
+				params.append('privilege', this.filterData.privilege);
 				axios
 					.get(this.$store.state.API_ROOT + 'blog/list/' + this.blogPage + "?" + params.toString())
 					.then(response => {
@@ -165,6 +171,13 @@
 					});
 			},
 			filterBlog() {
+				this.$router.push({
+					path: '/manage/blog',
+					query: {
+						page: 1,
+					}
+				})
+				
 				this.blogLoading = true;
 				var params = new URLSearchParams();
 				params.append('user_id', this.$store.state.loginInfo.user_id);

@@ -27,6 +27,7 @@ export default new Router({
 			name: 'Problem',
 			component: () => import('./views/Problem.vue'),
 			meta: {
+				auth: true,
 				title: '问题 - CodeOJ'
 			}
 		},
@@ -37,6 +38,23 @@ export default new Router({
 			meta: {
 				auth: true,
 				title: '问题编辑 - CodeOJ'
+			}
+		},
+		{
+			path: '/problem/add',
+			name: 'ProblemAdd',
+			component: () => import('./views/ProblemAdd.vue'),
+			meta: {
+				auth: true,
+				title: '新建问题 - CodeOJ'
+			}
+		},
+		{
+			path: '/status',
+			name: 'Status',
+			component: () => import('./views/Status.vue'),
+			meta: {
+				title: '评测状态 - CodeOJ'
 			}
 		},
 		{
@@ -124,21 +142,21 @@ export default new Router({
 						auth: true,
 						title: '端口设置 - CodeOJ'
 					},
-				},, {
+				}, {
 					path: 'carouse',
 					component: () => import('./views/ManageCarouse.vue'),
 					meta: {
 						auth: true,
 						title: '首页轮播 - CodeOJ'
 					},
-				},, {
+				}, {
 					path: 'news',
 					component: () => import('./views/ManageNews.vue'),
 					meta: {
 						auth: true,
 						title: '首页新闻 - CodeOJ'
 					},
-				},, {
+				}, {
 					path: 'problem',
 					component: () => import('./views/ManageProblem.vue'),
 					meta: {

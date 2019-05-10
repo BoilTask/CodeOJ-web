@@ -76,13 +76,13 @@
 			drawerClose: function() {
 				this.drawerTitle = '';
 			},
-			modalOk:function(){
-				
+			modalOk: function() {
+
 			},
-			modalCancel:function(){
-				
+			modalCancel: function() {
+
 			}
-		},
+		}
 	}
 </script>
 
