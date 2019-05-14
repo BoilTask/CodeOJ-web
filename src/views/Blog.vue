@@ -34,12 +34,12 @@
 
 <script>
 
-	import Vue from 'vue'
-	import VueSocketIO from 'vue-socket.io'
-	Vue.use(new VueSocketIO({
-	    debug: false,
-	    connection: 'http://ws.codeoj.cn:80',
-	}))
+	// import Vue from 'vue'
+	// import VueSocketIO from 'vue-socket.io'
+	// Vue.use(new VueSocketIO({
+	//     debug: false,
+	//     connection: 'http://ws.codeoj.cn:80',
+	// }))
 	
 	export default {
 		name: 'Blog',
@@ -106,18 +106,18 @@
 					console.log(error);
 				});
 		},
-		sockets: {
-			connect: function() {
-				console.log('socket connected')
-			},
-			chatmessage: function(data) {
-				this.$Notice.open({
-                    title: 'Notification title',
-                    desc: data ? data : 'Here is the notification description. Here is the notification description. '
-                });
-				console.log('this method was fired by the socket server. eg: io.emit("customEmit", data)')
-			}
-		},
+		// sockets: {
+		// 	connect: function() {
+		// 		console.log('socket connected')
+		// 	},
+		// 	chatmessage: function(data) {
+		// 		this.$Notice.open({
+  //                   title: 'Notification title',
+  //                   desc: data ? data : 'Here is the notification description. Here is the notification description. '
+  //               });
+		// 		console.log('this method was fired by the socket server. eg: io.emit("customEmit", data)')
+		// 	}
+		// },
 	}
 </script>
 

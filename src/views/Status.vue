@@ -1,33 +1,7 @@
 <template>
 	<Content style="text-align: center;padding: 20px;">
-		<Form ref="filterData" :model="filterData" inline>
-			<FormItem prop="title">
-				<Input type="text" v-model="filterData.title" placeholder="Title">
-				<span slot="prepend">标题：</span>
-				</Input>
-			</FormItem>
-			<FormItem prop="tags">
-				<Input type="text" v-model="filterData.tags" placeholder="Tags">
-				<span slot="prepend">标签：</span>
-				</Input>
-			</FormItem>
-			<FormItem>
-				<Select v-model="filterData.privilege">
-					<span slot="prefix">权限：</span>
-					<Option :value="0" :key="0">全部</Option>
-					<Option :value="1" :key="1">公开</Option>
-					<Option :value="2" :key="2">私有</Option>
-				</Select>
-			</FormItem>
-			<FormItem>
-				<Button type="primary" @click="filterStatus">筛选</Button>
-			</FormItem>
-		</Form>
-		<Page :total="statusCnt" :page-size="statusPageSize" :current="statusPage" @on-change="changePage" show-elevator show-total
-		 class="pageBar" />
 		<Table stripe :columns="statusColumns" :data="statusData" :loading="statusLoading"></Table>
-		<Page :total="statusCnt" :page-size="statusPageSize" :current="statusPage" @on-change="changePage" show-elevator show-total
-		 class="pageBar" />
+		<MarkdownShow class="codeContent" v-model="code" />
 	</Content>
 </template>
 
@@ -37,81 +11,105 @@
 		data() {
 			return {
 				statusLoading: true,
-				statusCnt: 0,
-				statusPageSize: 50,
-				filterData: {
-					title: '',
-					tags: '',
-					privilege: 0
-				},
+				code: '',
 				statusColumns: [{
 						title: '#',
 						key: 'status_id',
+						align: "center",
+						width: '100'
 					}, {
 						title: '题目',
 						key: 'problem_id',
+						width: '100',
+						align: "center",
+						render: (h, params) => {
+							return h('Button', {
+								props: {
+									type: 'text',
+									to: '/problem/' + params.row.problem_id
+								}
+							}, params.row.problem_id);
+						}
 					},
 					{
 						title: '状态',
 						key: 'result',
+						align: "center",
+						render: (h, params) => {
+							return h('Button', {
+								props: {
+									type: this.resultToType(params.row.result),
+								}
+							}, this.intToResult(params.row.result));
+						}
 					},
 					{
 						title: '分数',
 						key: 'score',
+						width: '100',
+						render: (h, params) => {
+							if (params.row.result < 4) {
+								return h('Spin');
+							} else {
+								return h('Button', {
+									props: {
+										type: 'dashed',
+									}
+								}, params.row.score);
+							}
+						}
 					},
 					{
 						title: '用时',
 						key: 'time',
+						width: '100',
+						align: "center"
 					},
 					{
 						title: '内存',
 						key: 'memory',
+						width: '100',
+						align: "center"
 					},
 					{
-						title: '语言',
+						title: '语言 / 长度',
 						key: 'language',
-					},
-					{
-						title: '长度',
-						key: 'length',
+						width: '100',
+						align: "center",
+						render: (h, params) => {
+							return h('Button', {
+								props: {
+									type: 'dashed',
+								}
+							}, this.intToLanguage(params.row.language) + ' / ' + params.row.length);
+						}
 					},
 					{
 						title: '用户',
 						key: 'creator',
+						width: '180',
+						align: "center",
+						render: (h, params) => {
+							return h('Button', {
+								props: {
+									type: 'text',
+									to: '/user/' + params.row.creator
+								}
+							}, params.row.creator);
+						}
 					},
 					{
 						title: '时间',
 						key: 'insert_time',
+						width: '180',
+						align: "center"
 					},
 				],
-				statusData: [
-					{
-						'status_id':1,
-						'problem_id':1000,
-						'result':'Accept',
-						'score':100,
-						'time':'100ms',
-						'memory':'100MB',
-						'language':'C',
-						'length':'1000',
-						'creator':'BoilTask',
-						'insert_time':'2019-05-09 14:00:00',
-					}
-				]
-			}
-		},
-		computed: {
-			statusPage: function() {
-				if (this.$route.query['page'])
-					return parseInt(this.$route.query['page'])
-				else
-					return 1;
+				statusData: [],
+				interval: ''
 			}
 		},
 		mounted() {
-			this.filterData.title=this.$route.query['title']?this.$route.query['title']:''
-			this.filterData.tags=this.$route.query['tags']?this.$route.query['tags']:''
-			this.filterData.privilege=this.$route.query['privilege']?this.$route.query['privilege']:0
 			this.getStatusList()
 		},
 		watch: {
@@ -120,62 +118,138 @@
 			}
 		},
 		methods: {
-			changePage(val) {
-				this.$router.push({
-					path: '/manage/status',
-					query: {
-						page: val,
-					}
-				})
-			},
 			getStatusList() {
+
+				if (this.interval != '') {
+					clearInterval(this.interval);
+				}
+
 				this.statusLoading = true;
 				var params = new URLSearchParams();
-				params.append('user_id', this.$store.state.loginInfo.user_id);
-				params.append('token', this.$store.state.loginInfo.token);
-				
-				params.append('user', this.$store.state.loginInfo.user_id);
-				params.append('title', this.filterData.title);
-				params.append('tags', this.filterData.tags);
-				params.append('privilege', this.filterData.privilege);
+				if (this.$store.state.loginInfo.user_id && this.$store.state.loginInfo.user_id.length >= 3 && this.$store.state.loginInfo
+					.user_id.length <= 20)
+					params.append('user_id', this.$store.state.loginInfo.user_id);
+				if (this.$store.state.loginInfo.token && this.$store.state.loginInfo.token != '')
+					params.append('token', this.$store.state.loginInfo.token);
+
 				axios
-					.get(this.$store.state.API_ROOT + 'status/list/' + this.statusPage + "?" + params.toString())
+					.get(this.$store.state.API_ROOT + 'status/' + this.$route.params.id + "?" + params.toString())
 					.then(response => {
 						this.statusData = response.data.data.statusList
-						this.statusCnt = response.data.data.total
-						this.statusPageSize = response.data.data.pageSize
 						this.statusLoading = false;
+						this.interval = setInterval(
+
+							() => {
+								let updateList = new Array()
+								for (let i = 0; i < this.statusData.length; i++) {
+									if (this.statusData[i].result < 4) {
+										updateList.push({
+											key: i,
+											status_id: this.statusData[i].status_id
+										})
+									}
+								}
+
+								if (updateList.length === 0) {
+									clearInterval(this.interval);
+									return true;
+								}
+
+								let updateListStr = JSON.stringify(updateList)
+
+								var params = new URLSearchParams();
+								if (this.$store.state.loginInfo.user_id && this.$store.state.loginInfo.user_id.length >= 3 && this.$store.state
+									.loginInfo
+									.user_id.length <= 20)
+									params.append('user_id', this.$store.state.loginInfo.user_id);
+								if (this.$store.state.loginInfo.token && this.$store.state.loginInfo.token != '')
+									params.append('token', this.$store.state.loginInfo.token);
+								if (updateListStr && updateListStr.length > 0) {
+									params.append('statusList', updateListStr);
+								}
+
+								axios
+									.get(this.$store.state.API_ROOT + 'status/update' + "?" + params.toString())
+									.then(response => {
+
+										let newStatus = response.data.data.statusList
+
+										for (let i = 0; i < newStatus.length; i++) {
+											this.$set(this.statusData[newStatus[i].key], 'result', newStatus[i].result)
+											this.$set(this.statusData[newStatus[i].key], 'score', newStatus[i].score)
+											this.$set(this.statusData[newStatus[i].key], 'time', newStatus[i].time)
+											this.$set(this.statusData[newStatus[i].key], 'memory', newStatus[i].memory)
+										}
+
+									}).catch(function(error) {
+										console.log(error);
+									});
+							}
+
+							, 2500);
 					}).catch(function(error) {
 						console.log(error);
 					});
+
+				var params = new URLSearchParams();
+				if (this.$store.state.loginInfo.user_id && this.$store.state.loginInfo.user_id.length >= 3 && this.$store.state.loginInfo
+					.user_id.length <= 20)
+					params.append('user_id', this.$store.state.loginInfo.user_id);
+				if (this.$store.state.loginInfo.token && this.$store.state.loginInfo.token != '')
+					params.append('token', this.$store.state.loginInfo.token);
+
+				axios
+					.get(this.$store.state.API_ROOT + 'status/' + this.$route.params.id + "/detail?" + params.toString())
+					.then(response => {
+						this.code = '```'+(this.intToLanguage(this.statusData[0].language))+'\n'+response.data.data.code+'\n```'
+					}).catch(function(error) {
+						console.log(error);
+					});
+
+
 			},
-			filterStatus() {
-				this.statusLoading = true;
-				var params = new URLSearchParams();
-				params.append('user_id', this.$store.state.loginInfo.user_id);
-				params.append('token', this.$store.state.loginInfo.token);
-				params.append('user', this.$store.state.loginInfo.user_id);
-				params.append('title', this.filterData.title);
-				params.append('tags', this.filterData.tags);
-				params.append('privilege', this.filterData.privilege);
-				axios
-					.get(this.$store.state.API_ROOT + 'status/list/' + this.statusPage + "?" + params.toString())
-					.then(response => {
-						this.statusData = response.data.data.statusList
-						this.statusCnt = response.data.data.total
-						this.statusPageSize = response.data.data.pageSize
-						this.statusLoading = false;
-					}).catch(function(error) {
-						console.log(error);
-					});
-		
-			}
+			intToLanguage(t) {
+
+				let languageStr = ['C', 'C++', 'Pascal', 'Java', 'Python']
+				if (t >= 0 && t <= languageStr.length) {
+					return languageStr[t]
+				} else {
+					return 'Other'
+				}
+
+			},
+			intToResult(t) {
+				let resultStr = ['Pending', 'Pending Rejudge',
+					'Compiling', 'Running & Judging', 'Accept',
+					'Persentation Error', 'Wrong Answer',
+					'Time Limit Error', 'Memory Limit Error',
+					'Output Limit Exceeded', 'Runtime Error',
+					'Compile Error'
+				]
+				if (t >= 0 && t <= resultStr.length) {
+					return resultStr[t]
+				} else {
+					return 'Other'
+				}
+
+			},
+			resultToType(t) {
+				if (t < 4) {
+					return 'info'
+				} else if (t == 4) {
+					return 'success'
+				} else if (t == 5) {
+					return 'warning'
+				} else {
+					return 'error'
+				}
+			},
 		}
 	}
 </script>
 
 <style scoped>
-	.pageBar {
-		margin: 10px 0;
+	.codeContent {
+		margin: 10px 10px 10px 10px;
 	}
 </style>

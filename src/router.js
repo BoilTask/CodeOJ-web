@@ -51,6 +51,14 @@ export default new Router({
 		},
 		{
 			path: '/status',
+			name: 'StatusList',
+			component: () => import('./views/StatusList.vue'),
+			meta: {
+				title: '评测状态 - CodeOJ'
+			}
+		},
+		{
+			path: '/status/:id(\\d+)',
 			name: 'Status',
 			component: () => import('./views/Status.vue'),
 			meta: {

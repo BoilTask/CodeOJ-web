@@ -21,15 +21,15 @@
 						<Col span="16">
 						<Select v-model="language">
 							<span slot="prefix">语言：</span>
-							<Option v-for="(item,index) in languages" :value="item" :key="index">{{ item }}</Option>
+							<Option v-for="item in languageList" :value="item.key" :key="item.key">{{ item.name }}</Option>
 						</Select>
 						</Col>
 						<Col span="8">
-						<Button type="error">提交</Button>
+						<Button type="error" :loading="btnLoading" @click="submitCode">提交</Button>
 						</Col>
 					</Row>
-					<mavon-editor class="codeEdit" :boxShadow="false" :subfield="false" :shortCut="false" 
-					:toolbars="problemToolbars" defaultOpen="edit" :ishljs="true" placeholder="将代码复制到此处……" />
+					<mavon-editor class="codeEdit" :boxShadow="false" :subfield="false" :shortCut="false" :toolbars="problemToolbars"
+					 defaultOpen="edit" :ishljs="true" v-on:save="submitCode" v-model="code" placeholder="将代码复制到此处……" />
 				</Card>
 			</div>
 		</Sider>
@@ -51,7 +51,7 @@
 				memory_limit: '',
 				accept: 0,
 				attempt: 0,
-				isEdit:false,
+				isEdit: false,
 				problemCol: [{
 						key: 'name'
 					},
@@ -66,9 +66,9 @@
 												props: {
 													type: index & 1 ? 'info' : 'success',
 													size: 'small',
-													to: '/blog/tag/' + item.name
+													to: '/problem?tags=' + item.name
 												},
-												style: "margin:0 1px"
+												style: "margin:1px"
 											},
 											item.name
 										))
@@ -83,10 +83,23 @@
 					}
 				],
 				problemData: [],
-				language: '',
-				languages: [
-					'C',
-					'C++'
+				language: 0,
+				languageList: [{
+						key: 0,
+						name: 'C'
+					},
+					{
+						key: 1,
+						name: 'C++'
+					},
+					{
+						key: 3,
+						name: 'Java'
+					},
+					{
+						key: 6,
+						name: 'Python'
+					}
 				],
 				problemToolbars: {
 					bold: false, // 粗体
@@ -122,10 +135,13 @@
 					/* 2.2.1 */
 					subfield: false, // 单双栏模式
 					preview: false, // 预览
-				}
+				},
+				btnLoading: false,
+				code: ''
 			}
 		},
 		mounted() {
+			let judgeStr = ['标准判题', '特殊评判', '文本比较']
 			axios
 				.get(this.$store.state.API_ROOT + 'problem/' + this.$route.params.id)
 				.then(response => {
@@ -134,18 +150,55 @@
 					document.title = this.problemId + this.problemTitle + " - CodeOJ"
 					this.description = response.data.data.problemInfo.description
 					this.hint = response.data.data.problemInfo.hint
-					response.data.data.problemInfo.problemData[1].info=response.data.data.problemInfo.problemData[1].info+' MS'
-					response.data.data.problemInfo.problemData[2].info=response.data.data.problemInfo.problemData[2].info+' MB'
-					response.data.data.problemInfo.problemData[5].info=(response.data.data.problemInfo.problemData[5].info==0?'公开':'私有')
-					
+					response.data.data.problemInfo.problemData[1].info = response.data.data.problemInfo.problemData[1].info + ' MS'
+					response.data.data.problemInfo.problemData[2].info = response.data.data.problemInfo.problemData[2].info + ' MB'
+
+					response.data.data.problemInfo.problemData[3].info = judgeStr[response.data.data.problemInfo.problemData[3].info]
+
+					response.data.data.problemInfo.problemData[6].info = (response.data.data.problemInfo.problemData[6].info == 0 ?
+						'公开' : '私有')
+
 					this.problemData = response.data.data.problemInfo.problemData
 
-					this.isEdit = (this.problemData[8].info === this.$store.state.loginInfo.user_id)
-					
+					this.isEdit = (this.problemData[9].info === this.$store.state.loginInfo.user_id)
+
 				}).catch(function(error) {
 					console.log(error);
 				});
-		}
+		},
+		methods: {
+			submitCode() {
+
+				if (this.code == '') {
+					this.$Message.error('请填写代码！');
+				} else {
+
+
+					this.$Spin.show();
+					var params = new URLSearchParams();
+					params.append('user_id', this.$store.state.loginInfo.user_id);
+					params.append('token', this.$store.state.loginInfo.token);
+					params.append('problem_id', this.problemId);
+					params.append('language', this.language);
+					params.append('code', this.code);
+
+					this.btnLoading = true
+					axios
+						.post(this.$store.state.API_ROOT + 'problem/submit', params)
+						.then(response => {
+							if (response.data.data.is_ok) {
+								this.$Message.success('提交成功！');
+								this.$router.push('/status/' + response.data.data.status_id)
+							} else
+								this.$Message.error('提交失败！');
+							this.btnLoading = false
+							this.$Spin.hide();
+						}).catch(function(error) {
+							console.log(error)
+						});
+				}
+			}
+		},
 	}
 </script>
 

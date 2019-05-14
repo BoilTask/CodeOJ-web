@@ -164,7 +164,7 @@
 					this.problemPage = 1
 				this.problemLoading = true;
 				var params = new URLSearchParams();
-				if (this.$store.state.loginInfo.user_id && this.$store.state.loginInfo.user_id != '')
+				if (this.$store.state.loginInfo.user_id && this.$store.state.loginInfo.user_id.length >= 3 && this.$store.state.loginInfo.user_id.length <= 20)
 					params.append('user_id', this.$store.state.loginInfo.user_id);
 				if (this.$store.state.loginInfo.token && this.$store.state.loginInfo.token != '')
 					params.append('token', this.$store.state.loginInfo.token);
