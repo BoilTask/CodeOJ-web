@@ -99,6 +99,7 @@
 						trigger: 'blur'
 					}],
 					old_password: [{
+						required: true,
 						validator: validateOldPassCheck,
 						trigger: 'blur'
 					}],
@@ -121,6 +122,7 @@
 						trigger: 'blur'
 					}],
 					email: [{
+						required: true,
 						validator: validateEmailCheck,
 						trigger: 'blur'
 					}]

@@ -180,6 +180,7 @@
 						title: '状态',
 						key: 'result',
 						align: "center",
+						width: '175',
 						render: (h, params) => {
 							return h('Button', {
 								props: {
@@ -192,7 +193,7 @@
 					{
 						title: '分数',
 						key: 'score',
-						width: '100',
+						width: '75',
 						render: (h, params) => {
 
 							if (params.row.result < 4) {
@@ -211,18 +212,24 @@
 						title: '用时',
 						key: 'time',
 						width: '100',
-						align: "center"
+						align: "center",
+						render: (h, params) => {
+							return h('span', params.row.time<0?'-':params.row.time);
+						}
 					},
 					{
 						title: '内存',
 						key: 'memory',
 						width: '100',
-						align: "center"
+						align: "center",
+						render: (h, params) => {
+							return h('span', params.row.memory<0?'-':params.row.memory);
+						}
 					},
 					{
 						title: '语言 / 长度',
 						key: 'language',
-						width: '100',
+						width: '150',
 						align: "center",
 						render: (h, params) => {
 							return h('Button', {
@@ -236,7 +243,6 @@
 					{
 						title: '用户',
 						key: 'creator',
-						width: '180',
 						align: "center",
 						render: (h, params) => {
 							return h('Button', {
@@ -417,14 +423,15 @@
 					'Persentation Error', 'Wrong Answer',
 					'Time Limit Error', 'Memory Limit Error',
 					'Output Limit Exceeded', 'Runtime Error',
-					'Compile Error'
+					'Compile Error','Compile Limit Exceeded',
+					'Test Running','Judge Error'
 				]
 				if (t >= 0 && t <= resultStr.length) {
 					return resultStr[t]
 				} else {
 					return 'Other'
 				}
-
+			
 			},
 			resultToType(t) {
 				if (t < 4) {

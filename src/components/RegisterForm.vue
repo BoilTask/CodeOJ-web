@@ -5,10 +5,10 @@
 				<Input v-model="formValidate.user_id" placeholder="userid"></Input>
 			</FormItem>
 			<FormItem label="密码" prop="password">
-				<Input v-model="formValidate.password" placeholder="newpassword"></Input>
+				<Input type="password" v-model="formValidate.password" placeholder="newpassword"></Input>
 			</FormItem>
 			<FormItem label="请确认" prop="repeat_password">
-				<Input v-model="formValidate.repeat_password" placeholder="repeatpassword"></Input>
+				<Input type="password" v-model="formValidate.repeat_password" placeholder="repeatpassword"></Input>
 			</FormItem>
 			<FormItem label="昵称" prop="nickname">
 				<Input v-model="formValidate.nickname" placeholder="nickname"></Input>
@@ -118,6 +118,7 @@
 								this.$Spin.hide();
 								if (response.data.data.is_ok) {
 									this.$Message.success('注册成功！');
+									this.$router.go(0)
 								} else
 									this.$Message.error(response.data.data.msg===''?'注册失败！':response.data.data.msg);
 							}).catch(function(error) {
