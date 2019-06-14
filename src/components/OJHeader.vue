@@ -13,9 +13,9 @@
 			<Icon type="md-filing" />
 			状态
 			</MenuItem>
-			<MenuItem name="ai" to="/ai">
+			<MenuItem name="recommend" to="/recommend">
 			<Icon type="logo-snapchat" />
-			对战
+			推荐
 			</MenuItem>
 			<MenuItem name="rank" to="/rank">
 			<Icon type="ios-stats" />

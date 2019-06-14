@@ -10,7 +10,8 @@
 					<Collapse class="codeContent" simple>
 						<Panel v-for="taskData in task">
 
-							结果：<Tag :color="resultToType(taskData.result)">{{intToResult(taskData.result)}}</Tag> | 用时：{{taskData.time}} MS | 内存：{{taskData.memory}} KB
+							结果：<Tag :color="resultToType(taskData.result)">{{intToResult(taskData.result)}}</Tag> | 用时：{{taskData.time}} MS
+							| 内存：{{taskData.memory}} KB
 							<p slot="content">
 								{{taskData.content==""?"无提示信息！":taskData.content}}
 							</p>
@@ -29,6 +30,7 @@
 			return {
 				statusLoading: true,
 				code: '',
+				judge_time: '',
 				compileInfo: '',
 				statusColumns: [{
 						title: '#',
@@ -61,7 +63,7 @@
 						title: '状态',
 						key: 'result',
 						align: "center",
-						width: '175',
+						width: '180',
 						render: (h, params) => {
 							return h('Button', {
 								props: {
@@ -74,7 +76,7 @@
 					{
 						title: '分数',
 						key: 'score',
-						width: '75',
+						width: '100',
 						render: (h, params) => {
 
 							if (params.row.result < 4) {
@@ -185,25 +187,38 @@
 						axios
 							.get(this.$store.state.API_ROOT + 'status/' + this.$route.params.id + "/detail?" + params.toString())
 							.then(response => {
-								this.code = '```' + (this.intToLanguage(this.statusData[0].language)) + '\n' + response.data.data.code +
+								this.code = '## 用户代码\n```' + (this.intToLanguage(this.statusData[0].language)) + '\n' + response.data.data.code +
 									'\n```'
-								this.compileInfo = (response.data.data.compileInfo && response.data.data.compileInfo != '') ? '## 编译信息' +
-									'\n' + response.data.data.compileInfo : ''
 									
-								let taskstemp=response.data.data.tasks;
-								let tasksArray=Array();
-								for(let i=0;i<taskstemp.length;i++){
-									if(!Array.isArray(tasksArray[taskstemp[i].task_id]))
-									tasksArray[taskstemp[i].task_id]=Array();
-									tasksArray[taskstemp[i].task_id].push({
-										result:taskstemp[i].result,
-										time:taskstemp[i].time,
-										memory:taskstemp[i].memory,
-										content:taskstemp[i].content
-									})
+								let judge_time=response.data.data.judgeInfo.judge_time
+								let judger=response.data.data.judgeInfo.judger
+								
+								if(judge_time&&judge_time!=''){
+									let judgeInfo='## 判题信息\n>'+judge_time
+									if(judger&&judger!=''){
+										judgeInfo = judgeInfo +' By '+judger
+									}
+									this.code=judgeInfo+'\n'+this.code
 								}
 								
-								this.tasks=tasksArray
+								
+								this.compileInfo = (response.data.data.compileInfo && response.data.data.compileInfo != '') ? '## 编译信息' +
+									'\n' + response.data.data.compileInfo : ''
+								
+								let taskstemp = response.data.data.tasks;
+								let tasksArray = Array();
+								for (let i = 0; i < taskstemp.length; i++) {
+									if (!Array.isArray(tasksArray[taskstemp[i].task_id]))
+										tasksArray[taskstemp[i].task_id] = Array();
+									tasksArray[taskstemp[i].task_id].push({
+										result: taskstemp[i].result,
+										time: taskstemp[i].time,
+										memory: taskstemp[i].memory,
+										content: taskstemp[i].content
+									})
+								}
+
+								this.tasks = tasksArray
 							}).catch(function(error) {
 								console.log(error);
 							});
@@ -245,13 +260,13 @@
 									.then(response => {
 
 										let newStatus = response.data.data.statusList
-
 										for (let i = 0; i < newStatus.length; i++) {
 											this.$set(this.statusData[newStatus[i].key], 'result', newStatus[i].result)
 											this.$set(this.statusData[newStatus[i].key], 'score', newStatus[i].score)
 											this.$set(this.statusData[newStatus[i].key], 'time', newStatus[i].time)
 											this.$set(this.statusData[newStatus[i].key], 'memory', newStatus[i].memory)
 										}
+
 
 									}).catch(function(error) {
 										console.log(error);
@@ -266,7 +281,7 @@
 			},
 			intToLanguage(t) {
 
-				let languageStr = ['C', 'C++', 'Pascal', 'Java', 'Python']
+				let languageStr = ['C', 'C++', 'Pascal', 'Java', 'Ruby', 'Bash', 'Python']
 				if (t >= 0 && t <= languageStr.length) {
 					return languageStr[t]
 				} else {
@@ -281,7 +296,7 @@
 					'Time Limit Error', 'Memory Limit Error',
 					'Output Limit Exceeded', 'Runtime Error',
 					'Compile Error', 'Compile Limit Exceeded',
-					'Test Running', 'Judge Error'
+					'Test Running', 'Judge Fail'
 				]
 				if (t >= 0 && t <= resultStr.length) {
 					return resultStr[t]

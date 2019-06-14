@@ -26,7 +26,7 @@
 								</Input>
 							</FormItem>
 							<FormItem>
-								<Button type="primary" @click="getBlogList(true)">筛选</Button>
+								<Button type="primary" @click="getProblemList(true)">筛选</Button>
 							</FormItem>
 						</Form>
 					</Card>
@@ -44,7 +44,7 @@
 
 <script>
 	export default {
-		name: 'Bloglist',
+		name: 'Problemlist',
 		data() {
 			return {
 				problemLoading: true,
@@ -62,7 +62,7 @@
 						render: (h, params) => {
 							return h('Button', {
 								props: {
-									type:  params.row.result==1?'success':(params.row.result==-1?'error':'dashed'),
+									type: 'dashed',
 									size: 'small',
 									to: '/problem/' + params.row.problem_id
 								}
@@ -139,7 +139,7 @@
 		mounted() {
 			this.filterData.title = this.$route.query['title'] ? this.$route.query['title'] : ''
 			this.filterData.tags = this.$route.query['tags'] ? this.$route.query['tags'] : ''
-			this.getBlogList()
+			this.getProblemList()
 			axios
 				.get(this.$store.state.API_ROOT + 'problem/tag')
 				.then(response => {
@@ -152,20 +152,19 @@
 			'$route'(to, from) {
 				this.filterData.title = this.$route.query['title'] ? this.$route.query['title'] : ''
 				this.filterData.tags = this.$route.query['tags'] ? this.$route.query['tags'] : ''
-				this.getBlogList()
+				this.getProblemList()
 			}
 		},
 		methods: {
 			changePage(val) {
 				this.problemPage = val
 			},
-			getBlogList(reset = false) {
+			getProblemList(reset = false) {
 				if (reset)
 					this.problemPage = 1
 				this.problemLoading = true;
 				var params = new URLSearchParams();
-				if (this.$store.state.loginInfo.user_id && this.$store.state.loginInfo.user_id.length >= 3 && this.$store.state.loginInfo
-					.user_id.length <= 20)
+				if (this.$store.state.loginInfo.user_id && this.$store.state.loginInfo.user_id.length >= 3 && this.$store.state.loginInfo.user_id.length <= 20)
 					params.append('user_id', this.$store.state.loginInfo.user_id);
 				if (this.$store.state.loginInfo.token && this.$store.state.loginInfo.token != '')
 					params.append('token', this.$store.state.loginInfo.token);
@@ -181,35 +180,6 @@
 						this.problemCnt = response.data.data.total
 						this.problemPageSize = response.data.data.pageSize
 						this.problemLoading = false;
-
-						if (this.$store.state.loginInfo.user_id && this.$store.state.loginInfo.user_id.length >= 3 && this.$store.state.loginInfo
-							.user_id.length <= 20) {
-							var params = new URLSearchParams();
-							let problemList = Array();
-							for (let i = 0; i < this.problemData.length; i++) {
-								problemList.push(this.problemData[i]['problem_id'])
-							}
-							params.append('user_id', this.$store.state.loginInfo.user_id);
-							if (this.$store.state.loginInfo.token && this.$store.state.loginInfo.token != '')
-								params.append('token', this.$store.state.loginInfo.token);
-							params.append('problemList', JSON.stringify(problemList));
-							axios
-								.get(this.$store.state.API_ROOT + 'status/check' + "?" + params.toString())
-								.then(response => {
-									if (response.data.data.is_ok) {
-										let resultList = response.data.data.resultList;
-										let tempData = this.problemData;
-										for (let i = 0; i < tempData.length; i++) {
-											if (resultList[tempData[i]['problem_id']]) {
-												this.$set(this.problemData[i], 'result', parseInt(resultList[tempData[i]['problem_id']]))
-											}
-										}
-									}
-								}).catch(function(error) {
-									console.log(error);
-								});
-						}
-						
 					}).catch(function(error) {
 						console.log(error);
 					});

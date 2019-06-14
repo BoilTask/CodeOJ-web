@@ -2,33 +2,27 @@
 	<Layout>
 		<Row>
 			<Col span="16">
+			<Card>
+				根据本题目数据，推荐您完成以下题目：
+			</Card>
 			<Content style="text-align: center;">
-				<Page :total="problemCnt" :page-size="problemPageSize" :current="problemPage" @on-change="changePage" show-elevator
-				 show-total class="pageBar" />
 				<Table stripe :columns="problemColumns" :data="problemData" :loading="problemLoading"></Table>
-				<Page :total="problemCnt" :page-size="problemPageSize" :current="problemPage" @on-change="changePage" show-elevator
-				 show-total class="pageBar" />
 			</Content>
 			</Col>
 			<Col span="8">
 			<Sider hide-trigger width="100%">
 				<div style="background-color: #f8f8f9;padding:20px;">
 					<Card class="siderCard">
-						<Form ref="filterData" :model="filterData">
-							<FormItem prop="title">
-								<Input type="text" v-model="filterData.title" placeholder="Title">
-								<span slot="prepend">标题：</span>
-								</Input>
-							</FormItem>
-							<FormItem prop="tags">
-								<Input type="text" v-model="filterData.tags" placeholder="Tags">
-								<span slot="prepend">标签：</span>
-								</Input>
-							</FormItem>
-							<FormItem>
-								<Button type="primary" @click="getBlogList(true)">筛选</Button>
-							</FormItem>
-						</Form>
+						<p slot="title">{{problemId}}{{problemTitle}}</p>
+						<p slot="extra">
+							<Button :to="'/problem/'+this.$route.params.id+''" type="error">返回</Button>
+						</p>
+						<p>
+							题目推荐算法：
+						</p>
+						<p style="text-indent: 2em;">
+							本页面为根据题目来推荐类似题目，依据为AC本题用户大概率AC某一题，根据AC某题的人数排序，得出推荐题目。
+						</p>
 					</Card>
 
 					<Card v-if="tagData.length>0" class="siderCard" style="background-color: #212121">
@@ -44,16 +38,12 @@
 
 <script>
 	export default {
-		name: 'Bloglist',
+		name: 'ProblemRecommend',
 		data() {
 			return {
+				problemId: '',
+				problemTitle: '',
 				problemLoading: true,
-				problemCnt: 0,
-				problemPageSize: 50,
-				filterData: {
-					title: '',
-					tags: '',
-				},
 				tagData: [],
 				problemColumns: [{
 						title: '#',
@@ -62,7 +52,7 @@
 						render: (h, params) => {
 							return h('Button', {
 								props: {
-									type:  params.row.result==1?'success':(params.row.result==-1?'error':'dashed'),
+									type: 'dashed',
 									size: 'small',
 									to: '/problem/' + params.row.problem_id
 								}
@@ -116,50 +106,11 @@
 				problemData: []
 			}
 		},
-		computed: {
-			problemPage: {
-				get: function() {
-					if (this.$route.query['page'])
-						return parseInt(this.$route.query['page'])
-					else
-						return 1;
-				},
-				set: function(val) {
-					this.$router.push({
-						path: 'problem',
-						query: {
-							title: this.filterData.title,
-							tags: this.filterData.tags,
-							page: val,
-						}
-					})
-				}
-			}
-		},
 		mounted() {
-			this.filterData.title = this.$route.query['title'] ? this.$route.query['title'] : ''
-			this.filterData.tags = this.$route.query['tags'] ? this.$route.query['tags'] : ''
-			this.getBlogList()
-			axios
-				.get(this.$store.state.API_ROOT + 'problem/tag')
-				.then(response => {
-					this.tagData = response.data.data.tags;
-				}).catch(function(error) {
-					console.log(error);
-				});
-		},
-		watch: {
-			'$route'(to, from) {
-				this.filterData.title = this.$route.query['title'] ? this.$route.query['title'] : ''
-				this.filterData.tags = this.$route.query['tags'] ? this.$route.query['tags'] : ''
-				this.getBlogList()
-			}
+			this.getProblemList()
 		},
 		methods: {
-			changePage(val) {
-				this.problemPage = val
-			},
-			getBlogList(reset = false) {
+			getProblemList(reset = false) {
 				if (reset)
 					this.problemPage = 1
 				this.problemLoading = true;
@@ -169,19 +120,16 @@
 					params.append('user_id', this.$store.state.loginInfo.user_id);
 				if (this.$store.state.loginInfo.token && this.$store.state.loginInfo.token != '')
 					params.append('token', this.$store.state.loginInfo.token);
-				if (this.filterData.title && this.filterData.title != '')
-					params.append('title', this.filterData.title);
-				if (this.filterData.tags && this.filterData.tags != '')
-					params.append('tags', this.filterData.tags);
 				axios
-					.get(this.$store.state.API_ROOT + 'problem/list/' + this.problemPage + "?" + params.toString())
+					.get(this.$store.state.API_ROOT + 'problem/' + this.$route.params.id + '/recommend' + "?" + params.toString())
 					.then(response => {
 
-						this.problemData = response.data.data.problemList
-						this.problemCnt = response.data.data.total
-						this.problemPageSize = response.data.data.pageSize
-						this.problemLoading = false;
+						this.problemId = response.data.data.problem_id
+						this.problemTitle = " - " + response.data.data.title
 
+						this.problemData = response.data.data.problemList
+						this.tagData = response.data.data.tags;
+						this.problemLoading = false;
 						if (this.$store.state.loginInfo.user_id && this.$store.state.loginInfo.user_id.length >= 3 && this.$store.state.loginInfo
 							.user_id.length <= 20) {
 							var params = new URLSearchParams();
@@ -209,7 +157,6 @@
 									console.log(error);
 								});
 						}
-						
 					}).catch(function(error) {
 						console.log(error);
 					});
@@ -219,10 +166,6 @@
 </script>
 
 <style scoped>
-	.pageBar {
-		margin: 10px 0;
-	}
-
 	.siderCard {
 		width: 90%;
 		margin: 20px auto;

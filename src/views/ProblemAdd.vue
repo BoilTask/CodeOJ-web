@@ -11,7 +11,7 @@
 						</FormItem>
 						<FormItem label="时间限制" prop="time_limit">
 							<Input v-model="formValidate.time_limit" placeholder="time_limit">
-							<span slot="append">MS</span>
+							<span slot="append">S</span>
 							</Input>
 						</FormItem>
 						<FormItem label="内存限制" prop="memory_limit">

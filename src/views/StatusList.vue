@@ -30,7 +30,7 @@
 			</FormItem>
 			<FormItem prop="user">
 				<Input type="text" v-model="filterData.user" placeholder="user">
-				<span slot="prepend">用户：</span>
+				<Button slot="prepend" @click="fillMine">用户：</Button>
 				</Input>
 			</FormItem>
 			<FormItem>
@@ -112,6 +112,10 @@
 						name: 'Compile Error'
 					},
 					{
+						key: 14,
+						name: 'Judge Fail'
+					},
+					{
 						key: 0,
 						name: 'Pending'
 					},
@@ -180,7 +184,7 @@
 						title: '状态',
 						key: 'result',
 						align: "center",
-						width: '175',
+						width: '180',
 						render: (h, params) => {
 							return h('Button', {
 								props: {
@@ -193,7 +197,7 @@
 					{
 						title: '分数',
 						key: 'score',
-						width: '75',
+						width: '100',
 						render: (h, params) => {
 
 							if (params.row.result < 4) {
@@ -303,6 +307,11 @@
 			}
 		},
 		methods: {
+			fillMine(){
+				if (this.$store.state.loginInfo.user_id && this.$store.state.loginInfo.user_id.length >= 3 && this.$store.state.loginInfo
+					.user_id.length <= 20)
+					this.filterData.user = this.$store.state.loginInfo.user_id
+			},
 			getStatusList() {
 				if (this.interval != '') {
 					clearInterval(this.interval);
@@ -409,7 +418,7 @@
 			},
 			intToLanguage(t) {
 
-				let languageStr = ['C', 'C++', 'Pascal', 'Java', 'Python']
+				let languageStr = ['C', 'C++', 'Pascal', 'Java','Ruby','Bash','Python']
 				if (t >= 0 && t <= languageStr.length) {
 					return languageStr[t]
 				} else {
@@ -424,7 +433,7 @@
 					'Time Limit Error', 'Memory Limit Error',
 					'Output Limit Exceeded', 'Runtime Error',
 					'Compile Error','Compile Limit Exceeded',
-					'Test Running','Judge Error'
+					'Test Running','Judge Fail'
 				]
 				if (t >= 0 && t <= resultStr.length) {
 					return resultStr[t]

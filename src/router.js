@@ -15,11 +15,38 @@ export default new Router({
 			}
 		},
 		{
+			path: '/recommend',
+			name: 'Recommend',
+			component: () => import('./views/Recommend'),
+			meta: {
+				auth: true,
+				title: '智能推荐 - CodeOJ'
+			}
+		},
+		{
 			path: '/problem',
 			name: 'ProblemList',
 			component: () => import('./views/ProblemList.vue'),
 			meta: {
 				title: '问题列表 - CodeOJ'
+			}
+		},
+		{
+			path: '/problem/:id(\\d+)/statistics',
+			name: 'ProblemStatistics',
+			component: () => import('./views/ProblemStatistics'),
+			meta: {
+				auth: true,
+				title: '问题统计 - CodeOJ'
+			}
+		},
+		{
+			path: '/problem/:id(\\d+)/recommend',
+			name: 'ProblemRecommend',
+			component: () => import('./views/ProblemRecommend'),
+			meta: {
+				auth: true,
+				title: '问题推荐 - CodeOJ'
 			}
 		},
 		{
@@ -63,6 +90,14 @@ export default new Router({
 			component: () => import('./views/Status.vue'),
 			meta: {
 				title: '评测状态 - CodeOJ'
+			}
+		},
+		{
+			path: '/blog',
+			name: 'BlogList',
+			component: () => import('./views/BlogList.vue'),
+			meta: {
+				title: '文章列表 - CodeOJ'
 			}
 		},
 		{

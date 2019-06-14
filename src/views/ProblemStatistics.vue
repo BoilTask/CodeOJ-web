@@ -15,12 +15,6 @@
 						<Button v-if="isEdit" :to="'/problem/'+this.$route.params.id+'/edit'" type="error">编辑</Button>
 					</p>
 					<Table :columns="problemCol" :data="problemData" :show-header="false"></Table>
-				<p style="text-align: right;margin-top: 10px;">
-					<ButtonGroup>
-							<Button :to="'/status?problem_id='+this.$route.params.id" type="info">题目统计</Button>
-							<Button :to="'/problem/'+this.$route.params.id+'/recommend'" type="warning">题目推荐</Button>
-					</ButtonGroup>
-				</p>
 				</Card>
 				<Card class="ProblemCard" dis-hover>
 					<Row style="margin: 10px;text-align: center;">
@@ -148,21 +142,15 @@
 		},
 		mounted() {
 			let judgeStr = ['标准判题', '特殊评判', '文本比较']
-			var params = new URLSearchParams();
-			if (this.$store.state.loginInfo.user_id && this.$store.state.loginInfo.user_id.length >= 3 && this.$store.state.loginInfo
-				.user_id.length <= 20)
-				params.append('user_id', this.$store.state.loginInfo.user_id);
-			if (this.$store.state.loginInfo.token && this.$store.state.loginInfo.token != '')
-				params.append('token', this.$store.state.loginInfo.token);
 			axios
-				.get(this.$store.state.API_ROOT + 'problem/' + this.$route.params.id + "?" + params.toString())
+				.get(this.$store.state.API_ROOT + 'problem/' + this.$route.params.id)
 				.then(response => {
 					this.problemId = response.data.data.problemInfo.problem_id
 					this.problemTitle = " - " + response.data.data.problemInfo.title
 					document.title = this.problemId + this.problemTitle + " - CodeOJ"
 					this.description = response.data.data.problemInfo.description
 					this.hint = response.data.data.problemInfo.hint
-					response.data.data.problemInfo.problemData[1].info = response.data.data.problemInfo.problemData[1].info + ' S'
+					response.data.data.problemInfo.problemData[1].info = response.data.data.problemInfo.problemData[1].info + ' MS'
 					response.data.data.problemInfo.problemData[2].info = response.data.data.problemInfo.problemData[2].info + ' MB'
 
 					response.data.data.problemInfo.problemData[3].info = judgeStr[response.data.data.problemInfo.problemData[3].info]
