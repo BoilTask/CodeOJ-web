@@ -26,6 +26,15 @@
 					</p>
 					<Table :columns="tableCol" :data="blogData" :show-header="false"></Table>
 				</Card>
+				<Card title="文章讨论">
+					<p slot="extra">
+						<Button :to="'/discuss?keyword=b-'+this.$route.params.id">More</Button>
+					</p>
+					<CellGroup v-if="discussData.length>0">
+						<Cell v-for="(discuss,index) in discussData" :title="discuss.title" :to="'/discuss/'+discuss.discuss_id" ></Cell>
+					</CellGroup>
+					<span v-else>暂无讨论，可点击 <Button type="dashed" :to="'/discuss?keyword=b-'+this.$route.params.id">More</Button> 操作</span>
+				</Card>
 			</div>
 		</Sider>
 		</Col>
@@ -63,7 +72,7 @@
 												props: {
 													type: index & 1 ? 'info' : 'success',
 													size: 'small',
-													to: '/blog/tag/' + item.name
+													to: '/blog?tags=' + item.name
 												},
 												style: "margin:0 1px"
 											},
@@ -80,7 +89,8 @@
 					}
 				],
 				userData: [],
-				blogData: []
+				blogData: [],
+				discussData: []
 
 			}
 		},
@@ -105,19 +115,21 @@
 				}).catch(function(error) {
 					console.log(error);
 				});
-		},
-		// sockets: {
-		// 	connect: function() {
-		// 		console.log('socket connected')
-		// 	},
-		// 	chatmessage: function(data) {
-		// 		this.$Notice.open({
-  //                   title: 'Notification title',
-  //                   desc: data ? data : 'Here is the notification description. Here is the notification description. '
-  //               });
-		// 		console.log('this method was fired by the socket server. eg: io.emit("customEmit", data)')
-		// 	}
-		// },
+			params = new URLSearchParams();
+			if (this.$store.state.loginInfo.user_id && this.$store.state.loginInfo.user_id.length >= 3 && this.$store.state.loginInfo.user_id.length <= 20)
+				params.append('user_id', this.$store.state.loginInfo.user_id);
+			if (this.$store.state.loginInfo.token && this.$store.state.loginInfo.token != '')
+				params.append('token', this.$store.state.loginInfo.token);
+			params.append('keyword', 'b-'+this.$route.params.id);
+			axios
+				.get(this.$store.state.API_ROOT + 'discuss/list/1' + "?" + params.toString())
+				.then(response => {
+			
+					this.discussData = response.data.data.discussList
+				}).catch(function(error) {
+					console.log(error);
+				});
+		}
 	}
 </script>
 

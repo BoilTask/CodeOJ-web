@@ -63,10 +63,12 @@
 						<p slot="title">
 							每日签到
 						</p>
+						<!-- 
 						<a style="color: #ed4014;" slot="extra" @click.prevent="changeLimit">
 							<Icon type="ios-bowtie" />
 							签到
 						</a>
+						 -->
 						<div class="flexDiv">
 							<div>
 								<canvas id="rili" width="350px" height="200px" style="magin:0 auto;"></canvas>

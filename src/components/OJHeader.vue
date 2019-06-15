@@ -30,11 +30,22 @@
 				<Icon type="ios-document" />
 				博客
 				</MenuItem>
-				<MenuItem name="bbs" to="/blog">
+				<MenuItem name="discuss" to="/discuss">
 				<Icon type="ios-beer" />
 				论坛
 				</MenuItem>
 			</Submenu>
+			<Submenu name="contest">
+				<template slot="title">
+					<Icon type="ios-calendar" />
+					竞赛
+				</template>
+				<MenuItem name="contest-recent" to="/contest/recent">
+				<Icon type="md-medal" />
+				近期竞赛
+				</MenuItem>
+			</Submenu>
+			<!--
 			<Submenu name="contest">
 				<template slot="title">
 					<Icon type="ios-calendar" />
@@ -53,6 +64,7 @@
 				考试
 				</MenuItem>
 			</Submenu>
+			 -->
 			<div class="nav-profile">
 				<Submenu v-if="isLogin" name="profile">
 					<template slot="title">
@@ -63,10 +75,10 @@
 					<Icon type="ios-chatbubbles" />
 					空间
 					</MenuItem>
-					<MenuItem name="message" @click.native="messageShow">
+					<!-- <MenuItem name="message" @click.native="messageShow">
 					<Icon type="ios-chatbubbles" />
 					消息
-					</MenuItem>
+					</MenuItem> -->
 					<MenuItem name="manage" to='/manage'>
 					<Icon type="ios-contact" />
 					管理
@@ -106,7 +118,12 @@
 		computed: {
 			menuactive: function() {
 				let url = this.$route.path
-				let activeName = url.split("/")[1]
+				let activeName = ""
+				if(url.split("/")[1]=="contest" && url.split("/")[2]){
+					activeName="contest-"+url.split("/")[2]
+				}else{
+					activeName=url.split("/")[1]
+				}
 				if (activeName == "") {
 					activeName = "home"
 				}

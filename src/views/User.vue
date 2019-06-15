@@ -9,7 +9,7 @@
 					</p>
 					<CellGroup>
 						<Cell v-for="(blog,index) in blogData" :title="blog.title" :to="'/blog/'+blog.blog_id" >
-							<span slot="extra"><Icon type="md-git-pull-request" /><Time :time="blog.insert_time" /></span>
+							<span slot="extra"><Icon type="md-git-pull-request" /><Time :time="blog.update_time" /></span>
 						</Cell>
 					</CellGroup>
 				</Card>
@@ -56,7 +56,7 @@
 											props: {
 												type: index & 1 ? 'info' : 'success',
 												size: 'small',
-												to: '/blog/tag/' + item.name
+												to: '/blog?tags=' + item.name
 											},
 											style: "margin:0 1px"
 										},

@@ -15,12 +15,13 @@
 						<Button v-if="isEdit" :to="'/problem/'+this.$route.params.id+'/edit'" type="error">编辑</Button>
 					</p>
 					<Table :columns="problemCol" :data="problemData" :show-header="false"></Table>
-				<p style="text-align: right;margin-top: 10px;">
-					<ButtonGroup>
+					<p style="text-align: right;margin-top: 10px;">
+						<ButtonGroup>
+							<Button :to="'/discuss?keyword=p-'+this.$route.params.id" type="success">题目讨论</Button>
 							<Button :to="'/status?problem_id='+this.$route.params.id" type="info">题目统计</Button>
 							<Button :to="'/problem/'+this.$route.params.id+'/recommend'" type="warning">题目推荐</Button>
-					</ButtonGroup>
-				</p>
+						</ButtonGroup>
+					</p>
 				</Card>
 				<Card class="ProblemCard" dis-hover>
 					<Row style="margin: 10px;text-align: center;">

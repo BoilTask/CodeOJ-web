@@ -184,7 +184,7 @@
 						title: '状态',
 						key: 'result',
 						align: "center",
-						width: '180',
+						width: '190',
 						render: (h, params) => {
 							return h('Button', {
 								props: {

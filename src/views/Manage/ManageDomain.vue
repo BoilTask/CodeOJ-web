@@ -5,7 +5,7 @@
 </template>
 
 <script>
-	import SwitchServer from '../components/SwitchServer.vue'
+	import SwitchServer from '../../components/SwitchServer.vue'
 	export default {
 		name: 'ManageDomain',
 		components: {

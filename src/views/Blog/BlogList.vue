@@ -3,10 +3,10 @@
 		<Row>
 			<Col span="16">
 			<Content style="text-align: center;">
-				<Page :total="problemCnt" :page-size="problemPageSize" :current="problemPage" @on-change="changePage" show-elevator
+				<Page :total="blogCnt" :page-size="blogPageSize" :current="blogPage" @on-change="changePage" show-elevator
 				 show-total class="pageBar" />
-				<Table stripe :columns="problemColumns" :data="problemData" :loading="problemLoading"></Table>
-				<Page :total="problemCnt" :page-size="problemPageSize" :current="problemPage" @on-change="changePage" show-elevator
+				<Table stripe :columns="blogColumns" :data="blogData" :loading="blogLoading"></Table>
+				<Page :total="blogCnt" :page-size="blogPageSize" :current="blogPage" @on-change="changePage" show-elevator
 				 show-total class="pageBar" />
 			</Content>
 			</Col>
@@ -25,14 +25,19 @@
 								<span slot="prepend">标签：</span>
 								</Input>
 							</FormItem>
+							<FormItem prop="user">
+								<Input type="text" v-model="filterData.user" placeholder="User">
+								<span slot="prepend">作者：</span>
+								</Input>
+							</FormItem>
 							<FormItem>
-								<Button type="primary" @click="getProblemList(true)">筛选</Button>
+								<Button type="primary" @click="getBlogList(true)">筛选</Button>
 							</FormItem>
 						</Form>
 					</Card>
 
 					<Card v-if="tagData.length>0" class="siderCard" style="background-color: #212121">
-						<Button v-for="tag in tagData" style="margin:2px" ghost :to="'/problem?tags='+tag.name">{{tag.name}}</Button>
+						<Button v-for="tag in tagData" style="margin:2px" ghost :to="'/blog?tags='+tag.name">{{tag.name}}</Button>
 					</Card>
 
 				</div>
@@ -44,29 +49,31 @@
 
 <script>
 	export default {
-		name: 'Problemlist',
+		name: 'Bloglist',
 		data() {
 			return {
-				problemLoading: true,
-				problemCnt: 0,
-				problemPageSize: 50,
+				blogLoading: true,
+				blogCnt: 0,
+				blogPageSize: 50,
 				filterData: {
 					title: '',
 					tags: '',
+					user: '',
 				},
 				tagData: [],
-				problemColumns: [{
+				blogColumns: [{
 						title: '#',
-						key: 'problem_id',
+						key: 'blog_id',
 						width: 80,
+						align: "center",
 						render: (h, params) => {
 							return h('Button', {
 								props: {
 									type: 'dashed',
 									size: 'small',
-									to: '/problem/' + params.row.problem_id
+									to: '/blog/' + params.row.blog_id
 								}
-							}, params.row.problem_id);
+							}, params.row.blog_id);
 						}
 					}, {
 						title: '标题',
@@ -75,7 +82,7 @@
 							return h('Button', {
 								props: {
 									type: 'dashed',
-									to: '/problem/' + params.row.problem_id
+									to: '/blog/' + params.row.blog_id
 								}
 							}, params.row.title);
 						}
@@ -90,7 +97,7 @@
 										props: {
 											type: index & 1 ? 'info' : 'success',
 											size: 'small',
-											to: '/problem?tags=' + item.name
+											to: '/blog?tags=' + item.name
 										},
 										style: "margin:0 1px"
 									},
@@ -101,23 +108,24 @@
 						}
 					},
 					{
-						title: '正确',
-						key: 'accept',
-						sortable: true,
-						width: 80
-					},
-					{
-						title: '提交',
-						key: 'attempt',
-						sortable: true,
-						width: 80
+						title: '作者',
+						key: 'creator',
+						align: "center",
+						render: (h, params) => {
+							return h('Button', {
+								props: {
+									type: 'dashed',
+									to: '/user/' + params.row.creator
+								}
+							}, params.row.creator);
+						}
 					}
 				],
-				problemData: []
+				blogData: []
 			}
 		},
 		computed: {
-			problemPage: {
+			blogPage: {
 				get: function() {
 					if (this.$route.query['page'])
 						return parseInt(this.$route.query['page'])
@@ -126,10 +134,11 @@
 				},
 				set: function(val) {
 					this.$router.push({
-						path: 'problem',
+						path: 'blog',
 						query: {
 							title: this.filterData.title,
 							tags: this.filterData.tags,
+							user: this.filterData.user,
 							page: val,
 						}
 					})
@@ -139,9 +148,10 @@
 		mounted() {
 			this.filterData.title = this.$route.query['title'] ? this.$route.query['title'] : ''
 			this.filterData.tags = this.$route.query['tags'] ? this.$route.query['tags'] : ''
-			this.getProblemList()
+			this.filterData.user = this.$route.query['user'] ? this.$route.query['user'] : ''
+			this.getBlogList()
 			axios
-				.get(this.$store.state.API_ROOT + 'problem/tag')
+				.get(this.$store.state.API_ROOT + 'blog/tag')
 				.then(response => {
 					this.tagData = response.data.data.tags;
 				}).catch(function(error) {
@@ -152,17 +162,18 @@
 			'$route'(to, from) {
 				this.filterData.title = this.$route.query['title'] ? this.$route.query['title'] : ''
 				this.filterData.tags = this.$route.query['tags'] ? this.$route.query['tags'] : ''
-				this.getProblemList()
+				this.filterData.user = this.$route.query['user'] ? this.$route.query['user'] : ''
+				this.getBlogList()
 			}
 		},
 		methods: {
 			changePage(val) {
-				this.problemPage = val
+				this.blogPage = val
 			},
-			getProblemList(reset = false) {
+			getBlogList(reset = false) {
 				if (reset)
-					this.problemPage = 1
-				this.problemLoading = true;
+					this.blogPage = 1
+				this.blogLoading = true;
 				var params = new URLSearchParams();
 				if (this.$store.state.loginInfo.user_id && this.$store.state.loginInfo.user_id.length >= 3 && this.$store.state.loginInfo.user_id.length <= 20)
 					params.append('user_id', this.$store.state.loginInfo.user_id);
@@ -172,14 +183,16 @@
 					params.append('title', this.filterData.title);
 				if (this.filterData.tags && this.filterData.tags != '')
 					params.append('tags', this.filterData.tags);
+				if (this.filterData.user && this.filterData.user != '')
+					params.append('user', this.filterData.user);
 				axios
-					.get(this.$store.state.API_ROOT + 'problem/list/' + this.problemPage + "?" + params.toString())
+					.get(this.$store.state.API_ROOT + 'blog/list/' + this.blogPage + "?" + params.toString())
 					.then(response => {
 
-						this.problemData = response.data.data.problemList
-						this.problemCnt = response.data.data.total
-						this.problemPageSize = response.data.data.pageSize
-						this.problemLoading = false;
+						this.blogData = response.data.data.blogList
+						this.blogCnt = response.data.data.total
+						this.blogPageSize = response.data.data.pageSize
+						this.blogLoading = false;
 					}).catch(function(error) {
 						console.log(error);
 					});
