@@ -59,7 +59,7 @@ router.beforeEach((to, from, next) => {
 					}
 					next();
 				} else {
-					RouterError('无权限或信息有误！')
+					RouterError('无权限或信息有误！请检查是否登录了有权限进行此操作的账号！')
 				}
 			}).catch(function(error) {
 				console.log(error);

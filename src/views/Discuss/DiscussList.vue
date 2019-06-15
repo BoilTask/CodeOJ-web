@@ -32,7 +32,7 @@
 							</FormItem>
 							<FormItem>
 								<Button type="primary" @click="getDiscussList(true)">筛选</Button>
-								<Button type="error" :to="'/discuss/add?keyword='+filterData.keyword">新建</Button>
+								<Button v-if="$store.state.loginInfo.isLogin" type="error" :to="'/discuss/add?keyword='+filterData.keyword">新建</Button>
 							</FormItem>
 						</Form>
 					</Card>

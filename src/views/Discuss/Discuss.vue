@@ -39,7 +39,7 @@
 					<Table :columns="tableCol" :data="discussData" :show-header="false"></Table>
 					<p style="text-align: right;margin-top: 10px;">
 						<ButtonGroup>
-							<Button :to="'/discuss/'+this.$route.params.id+'/reply/add'" type="success">回复主题</Button>
+							<Button v-if="$store.state.loginInfo.isLogin" :to="'/discuss/'+this.$route.params.id+'/reply/add'" type="success">回复主题</Button>
 						</ButtonGroup>
 					</p>
 				</Card>
