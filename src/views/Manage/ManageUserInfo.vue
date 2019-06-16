@@ -12,7 +12,6 @@
 				</Steps>
 				</Col>
 				<Col span="16">
-
 				<Button v-if="email_flag==1" disabled>验证完成</Button>
 				<span v-else><Input v-model="email_key" placeholder="验证码区分大小写">
 					<Button slot="prepend">

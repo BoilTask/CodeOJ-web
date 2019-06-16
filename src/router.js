@@ -214,6 +214,13 @@ export default new Router({
 						auth: true,
 						title: '问题管理 - CodeOJ'
 					},
+				}, {
+					path: 'status',
+					component: () => import('./views/Manage/ManageStatus.vue'),
+					meta: {
+						auth: true,
+						title: '代码重判 - CodeOJ'
+					},
 				},
 				{
 					path: '',

@@ -61,7 +61,8 @@
 					</Card>
 					<Card style="margin: 10px;">
 						<p slot="title">
-							每日签到
+							当前日期
+							<!-- 每日签到 -->
 						</p>
 						<!-- 
 						<a style="color: #ed4014;" slot="extra" @click.prevent="changeLimit">

@@ -36,6 +36,7 @@
 							<MenuItem name="carouse" to="/manage/carouse">首页轮播</MenuItem>
 							<MenuItem name="news" to="/manage/news">首页新闻</MenuItem>
 							<MenuItem name="problem" to="/manage/problem">问题管理</MenuItem>
+							<MenuItem name="status" to="/manage/status">代码重判</MenuItem>
 						</MenuGroup>
 					</template>
 				</Submenu>

@@ -3,7 +3,7 @@
 		<Col span="16">
 		<Content>
 			<MarkdownShow v-model="description" />
-			<MarkdownShow v-model="hint" />
+			<MarkdownShow v-if="hint.length>0" v-model="hint" />
 		</Content>
 		</Col>
 		<Col span="8">
@@ -173,7 +173,7 @@
 
 					this.problemData = response.data.data.problemInfo.problemData
 
-					this.isEdit = (this.problemData[9].info === this.$store.state.loginInfo.user_id)
+					this.isEdit = this.$store.state.loginInfo.isLogin&&(this.problemData[9].info === this.$store.state.loginInfo.user_id)
 
 				}).catch(function(error) {
 					console.log(error);
