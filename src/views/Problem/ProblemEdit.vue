@@ -124,7 +124,7 @@
 					this.description = response.data.data.problemInfo.description
 					this.hint = response.data.data.problemInfo.hint
 					
-
+					this.formValidate.tags=""
 					let tags = response.data.data.problemInfo.problemData[0]['info']
 					for (let i = 0, len = tags.length; i < len; i++) {
 						if (i > 0)

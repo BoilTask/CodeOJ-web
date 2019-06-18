@@ -96,10 +96,12 @@
 
 					this.content = response.data.data.blog.content
 					let temp = Array()
-					temp[0] = response.data.data.blogData[0]
-					temp[1] = response.data.data.blogData[1]
+					temp[0] = response.data.data.blogData[1]
+					temp[1] = response.data.data.blogData[2]
 					this.blogData = temp
-					let tags = response.data.data.blogData[2]['info']
+					let tags = response.data.data.blogData[3]['info']
+					this.formValidate.tags=""
+					console.log(tags)
 					for (let i = 0, len = tags.length; i < len; i++) {
 						if (i > 0)
 							this.formValidate.tags += ","
