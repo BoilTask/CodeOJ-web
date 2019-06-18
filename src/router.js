@@ -79,7 +79,7 @@ export default new Router({
 		{
 			path: '/status',
 			name: 'StatusList',
-			component: () => import('./views/StatusList.vue'),
+			component: () => import('./views/Status/StatusList.vue'),
 			meta: {
 				title: '评测状态 - CodeOJ'
 			}
@@ -87,7 +87,7 @@ export default new Router({
 		{
 			path: '/status/:id(\\d+)',
 			name: 'Status',
-			component: () => import('./views/Status.vue'),
+			component: () => import('./views/Status/Status.vue'),
 			meta: {
 				title: '评测状态 - CodeOJ'
 			}
@@ -293,6 +293,24 @@ export default new Router({
 			meta: {
 				auth: true,
 				title: '编辑回复 - CodeOJ'
+			}
+		},
+		{
+			path: '/code',
+			name: 'Code',
+			component: () => import('./views/Code/Code.vue'),
+			meta: {
+				auth: true,
+				title: '码池 - CodeOJ'
+			}
+		},
+		{
+			path: '/code/:id',
+			name: 'CodeShow',
+			component: () => import('./views/Code/CodeShow.vue'),
+			meta: {
+				auth: true,
+				title: '码池展示 - CodeOJ'
 			}
 		},
 		{

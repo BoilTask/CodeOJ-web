@@ -105,6 +105,7 @@
 				var params = new URLSearchParams();
 				params.append('user_id', this.$store.state.loginInfo.user_id);
 				params.append('token', this.$store.state.loginInfo.token);
+				
 				params.append('content', this.content);
 				this.btnLoading = true
 				axios

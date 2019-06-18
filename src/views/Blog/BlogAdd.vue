@@ -155,10 +155,12 @@
 								this.$Spin.hide()
 								this.$Message.success('图片上传成功！')
 							}).catch(function(error) {
+								this.btnLoading = false
 								console.log(error);
 							});
 
 					}).catch(function(error) {
+						this.btnLoading = false
 						console.log(error);
 					});
 			}

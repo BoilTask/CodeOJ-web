@@ -107,6 +107,7 @@
 					}
 					this.btnLoading = false
 				}).catch(function(error) {
+					this.btnLoading = false
 					console.log(error);
 				});
 		},
@@ -129,7 +130,6 @@
 						this.btnLoading = false
 						this.$Spin.hide();
 					}).catch(function(error) {
-						this.$Message.error('保存失败！');
 						this.btnLoading = false
 						this.$Spin.hide();
 					});

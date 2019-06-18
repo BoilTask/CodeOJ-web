@@ -34,6 +34,10 @@
 				<Icon type="ios-beer" />
 				论坛
 				</MenuItem>
+				<MenuItem name="code" to="/code">
+				<Icon type="md-code" />
+				码池
+				</MenuItem>
 			</Submenu>
 			<Submenu name="contest">
 				<template slot="title">
