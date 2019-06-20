@@ -7,11 +7,20 @@
 					<p slot="extra">
 						<Button :to="'/blog?user='+user">More</Button>
 					</p>
-					<CellGroup>
-						<Cell v-for="(blog,index) in blogData" :title="blog.title" :to="'/blog/'+blog.blog_id" >
-							<span slot="extra"><Icon type="md-git-pull-request" /><Time :time="blog.update_time" /></span>
+					<CellGroup v-if="blogData.length>0">
+						<Cell v-for="(blog,index) in blogData" :title="blog.title" :to="'/blog/'+blog.blog_id">
+							<span slot="extra">
+								<Icon type="md-git-pull-request" /><Time :time="blog.update_time" /></span>
 						</Cell>
 					</CellGroup>
+					<p v-else>暂无文章……</p>
+				</Card>
+				<Card title="做题记录" icon="ios-leaf" style="margin-top:10px;">
+					<p slot="extra">
+						<Button :to="'/status?user='+user">More</Button>
+					</p>
+
+					<div ref="statusChart" style="width: 100%;height: 120px;"></div>
 				</Card>
 			</div>
 		</Content>
@@ -36,6 +45,7 @@
 </template>
 
 <script>
+	import echarts from 'echarts'
 	export default {
 		name: 'User',
 		data() {
@@ -76,22 +86,68 @@
 			}
 		},
 		mounted() {
-			var params = new URLSearchParams();
-			if(this.$store.state.loginInfo.isLogin){
-				params.append('user_id', this.$store.state.loginInfo.user_id);
-				params.append('token', this.$store.state.loginInfo.token);
+			this.getUserData();
+		},
+		watch: {
+			'$route'(to, from) {
+				this.getUserData();
 			}
-			axios
-				.get(this.$store.state.API_ROOT + 'user/' + this.$route.params.id+"?"+params.toString())
-				.then(response => {
-					this.user = response.data.data.user_id
-					document.title = this.user + " - CodeOJ"
-					this.userData = response.data.data.userData
-					this.userImg = response.data.data.userImg
-					this.blogData = response.data.data.blogData
-				}).catch(function(error) {
-					console.log(error);
-				});
+		},
+		methods: {
+			getUserData() {
+				this.statusChart = echarts.init(this.$refs.statusChart);
+				var params = new URLSearchParams();
+				if (this.$store.state.loginInfo.isLogin) {
+					params.append('user_id', this.$store.state.loginInfo.user_id);
+					params.append('token', this.$store.state.loginInfo.token);
+				}
+				axios
+					.get(this.$store.state.API_ROOT + 'user/' + this.$route.params.id + "?" + params.toString())
+					.then(response => {
+						this.user = response.data.data.user_id
+						document.title = this.user + " - CodeOJ"
+						this.userData = response.data.data.userData
+						this.userImg = response.data.data.userImg
+
+						let blogData = response.data.data.blogData
+						for (let i = 0; i < blogData.length; i++) {
+							blogData[i].update_time = blogData[i].update_time.toString().replace(/-/g, "/")
+						}
+
+						this.blogData = blogData
+
+						this.statusChart.setOption({
+							visualMap: {
+								show: false,
+								min: response.data.data.status.min,
+								max: response.data.data.status.max,
+								type: 'piecewise',
+								orient: 'horizontal',
+								left: 'center',
+								inRange: {
+									color: ['#C7DBFF', '#5291FF']
+								},
+							},
+							tooltip: {},
+							calendar: {
+								range: response.data.data.status.range,
+								left: 20,
+								top: 20,
+								cellSize: ['auto', 13],
+								yearLabel: {
+									show: false
+								}
+							},
+							series: {
+								type: 'heatmap',
+								coordinateSystem: 'calendar',
+								data: response.data.data.status.data
+							}
+						})
+					}).catch(function(error) {
+						console.log(error);
+					});
+			}
 		}
 	}
 </script>

@@ -38,7 +38,7 @@
 								</ul>
 							</div>
 						</Card>
-						<SwitchServer/>
+						<SwitchServer />
 					</TabPane>
 				</Tabs>
 			</Content>
@@ -76,14 +76,27 @@
 							</div>
 						</div>
 					</Card>
-					<i-circle :percent="circlePercent" :size="300" style="margin:20px">
-						<div>
-							<div style="font-size:32px">{{circlePercent}}%</div>
-							<div class="progressBox" style="font-size:24px">一日进度</div>
-							<div style="font-size:20px">{{this.$store.state.server_time}}</div>
-						</div>
-					</i-circle>
-
+					<div>
+						<i-circle :percent="circlePercent" :size="300" style="display:block;margin:20px auto;">
+							<div>
+								<div style="font-size:32px">{{circlePercent}}%</div>
+								<div class="progressBox" style="font-size:24px">一日进度</div>
+								<div style="font-size:20px">{{this.$store.state.server_time}}</div>
+							</div>
+						</i-circle>
+					</div>
+					<Card style="margin: 10px;">
+						<p slot="title">
+							<Icon type="ios-magnet" />友情链接
+						</p>
+						<ul style="margin: 0; padding-left: 20px; ">
+							<li><a href="https://hpuoj.com" target="_blank">HPU Online Judge</a></li>
+							<li><a href="http://vj.codeoj.cn" target="_blank">HPU Virtual Judge</a></li>
+							<li><a href="http://boiltask.com" target="_blank">BoilTask's Homepage</a></li>
+							<li><a href="https://www.kancloud.cn/hpuacm/acmbook/content" target="_blank">HPU ACM Book</a></li>
+							<li><a href="https://loj.ac" target="_blank">Libre Online Judge</a></li>
+						</ul>
+					</Card>
 				</div>
 			</Sider>
 			</Col>
