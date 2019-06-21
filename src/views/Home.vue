@@ -85,7 +85,7 @@
 							</div>
 						</i-circle>
 					</div>
-					<Card style="margin: 10px;">
+					<Card style="margin-top: 10px;">
 						<p slot="title">
 							<Icon type="ios-magnet" />友情链接
 						</p>
