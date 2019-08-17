@@ -6,13 +6,13 @@
 				<Select v-model="serverAPIROOT" style="width: 250px;">
 					<span slot="prefix">后台地址：</span>
 					<Option value="https://api.codeoj.cn/">https://api.codeoj.cn/</Option>
-					<Option value="http://local.codeoj.cn/">http://local.codeoj.cn/ - 开发环境</Option>
+					<Option value="http://local.codeoj.cn/">http://local.codeoj.cn/</Option>
 				</Select>
 			</p>
 			<p>
 				<ul class="list">
 					<li>主域名：<Button><a href="https://codeoj.cn">https://codeoj.cn</a></Button></li>
-					<li>coding.net代理：<Button><a href="https://tencent.codeoj.cn">https://tencent.codeoj.cn</a></Button></li>
+					<li>coding.net代理：<Button><a href="https://coding.codeoj.cn">https://coding.codeoj.cn</a></Button></li>
 					<li>github.com代理：<Button><a href="https://github.codeoj.cn">https://github.codeoj.cn</a></Button></li>
 					<li>开发环境：<Button><a href="http://localhost:8080">http://localhost:8080</a></Button></li>
 				</ul>
