@@ -110,7 +110,7 @@
 						params.append('content', this.content);
 						this.btnLoading = true
 						axios
-							.post(this.$store.state.API_ROOT + 'discuss/'+this.formValidate.discuss_id+'/reply/'+this.$route.params.reply_id+'/edit=', params)
+							.post(this.$store.state.API_ROOT + 'discuss/'+this.formValidate.discuss_id+'/reply/'+this.$route.params.reply_id+'/edit', params)
 							.then(response => {
 								if (response.data.data.is_ok) {
 									this.$Message.success('保存成功！');

@@ -90,7 +90,7 @@
 							<Icon type="ios-magnet" />友情链接
 						</p>
             <p slot="extra">
-              <Button to='/links'>More</Button>
+              <Button to='/blog/9'>More</Button>
             </p>
 						<ul style="margin: 0; padding-left: 20px; ">
 							<li><a href="https://hpuoj.com" target="_blank">HPU Online Judge</a></li>
