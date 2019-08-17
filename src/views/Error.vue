@@ -8,7 +8,7 @@
 			</Alert>
 			<Card style="width:100%">
 				<div style="text-align:center">
-					<img src="https://api.jysafe.cn/randacgimg" alt="访问出现错误!" style="width: 100%;">
+					<img src="https://random.52ecy.cn/randbg.php" alt="访问出现错误!" style="width: 100%;">
 				</div>
 			</Card>
 		</Content>
@@ -21,7 +21,7 @@
 					<Button v-on:click="goBack">返回</Button>
 					<Button to="/" type="success">首页</Button>
 				</ButtonGroup>
-				
+
 				<Card style="width:100%">
 					<div style="text-align:center">
 						<img src="https://api.jysafe.cn/ip" style="width: 100%;">
