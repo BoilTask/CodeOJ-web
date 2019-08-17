@@ -5,7 +5,7 @@
 			<p>{{time}}</p>
 		</div>
 		<div>
-			<Button to="//www.miitbeian.gov.cn" target="_blank" ghost>
+			<Button to="//www.beian.miit.gov.cn" target="_blank" ghost>
 				豫ICP备15024677号-3
 			</Button>
 		</div>

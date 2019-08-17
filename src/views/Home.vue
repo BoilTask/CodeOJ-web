@@ -64,7 +64,7 @@
 							当前日期
 							<!-- 每日签到 -->
 						</p>
-						<!-- 
+						<!--
 						<a style="color: #ed4014;" slot="extra" @click.prevent="changeLimit">
 							<Icon type="ios-bowtie" />
 							签到
@@ -85,10 +85,13 @@
 							</div>
 						</i-circle>
 					</div>
-					<Card style="margin-top: 10px;">
+					<Card style="margin:10px 10px 0 10px;">
 						<p slot="title">
 							<Icon type="ios-magnet" />友情链接
 						</p>
+            <p slot="extra">
+              <Button to='/links'>More</Button>
+            </p>
 						<ul style="margin: 0; padding-left: 20px; ">
 							<li><a href="https://hpuoj.com" target="_blank">HPU Online Judge</a></li>
 							<li><a href="http://vj.codeoj.cn" target="_blank">HPU Virtual Judge</a></li>
