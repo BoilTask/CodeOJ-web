@@ -7,7 +7,7 @@ import Cookies from 'js-cookie'
 
 export default new Vuex.Store({
 	state: {
-		API_ROOT: 'https://api.codeoj.cn/',
+		API_ROOT: 'https://oj-code-api.didapipa.com/',
 		CDN_ROOT: 'http://cdn.codeoj.cn/',
 		server_time: '',
 		loginInfo: {
@@ -29,7 +29,7 @@ export default new Vuex.Store({
 		},
 	},
 	mutations: {
-		changeAPIROOT(state, val = 'https://api.codeoj.cn/') {
+		changeAPIROOT(state, val = 'https://oj-code-api.didapipa.com/') {
 			state.API_ROOT = val
 			Cookies.set('API_ROOT', state.API_ROOT)
 		},

@@ -5,7 +5,7 @@
 			<p>
 				<Select v-model="serverAPIROOT" style="width: 250px;">
 					<span slot="prefix">后台地址：</span>
-					<Option value="https://api.codeoj.cn/">https://api.codeoj.cn/</Option>
+					<Option value="https://oj-code-api.didapipa.com/">https://oj-code-api.didapipa.com/</Option>
 					<Option value="http://local.codeoj.cn/">http://local.codeoj.cn/</Option>
 				</Select>
 			</p>
